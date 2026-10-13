@@ -386,7 +386,7 @@ h1 {
   background: var(--raise);
   box-shadow: 0 0 0 2px var(--gold);
 }
-.judge .jans { font-family: var(--kai); font-size: clamp(20px, calc(var(--s, 200px) * .16), 28px); line-height: 1; min-width: 22px; text-align: center; color: var(--ink); }
+.judge .jans { display: grid; place-items: center; font-family: var(--kai); font-size: clamp(22px, calc(var(--s, 200px) * .17), 30px); line-height: 1; min-width: 22px; color: var(--ink); }
 .judge .jnone { font-size: 13px; color: var(--ink-soft); padding: 0 6px; }
 .jb {
   width: clamp(32px, calc(var(--s, 200px) * .26), 44px); height: 38px;
@@ -528,6 +528,7 @@ body.rating .sheet .ink { cursor: default; }
   font-size: 17px;
 }
 .r-again { background: var(--panel); border: 1px solid var(--line); }
+.tool.armed { background: var(--seal); color: #ffffff; border-color: var(--seal); }
 .r-next { background: var(--ink); color: var(--desk); }
 
 /* tools */
@@ -706,6 +707,8 @@ textarea::placeholder { color: var(--ink-soft); opacity: .8; font-size: 18px; }
   box-shadow: 0 0 0 2px var(--raise);
 }
 .chip.nodata { outline: 2px dashed var(--gold); outline-offset: 2px; }
+/* a model character drawn from the stroke data, so it matches the demo and the textbook form (e.g. 辶 with one dot) */
+.gl { display: block; width: 1em; height: 1em; fill: currentColor; overflow: visible; }
 .hint { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
 .settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
 .wlist { display: grid; gap: 8px; }
@@ -754,7 +757,7 @@ textarea::placeholder { color: var(--ink-soft); opacity: .8; font-size: 18px; }
 }
 .rp-item canvas { width: 76px; height: 76px; border-radius: 3px; }
 .rp-line { display: flex; align-items: center; gap: 6px; }
-.rp-ans { font-family: var(--kai); font-size: 24px; line-height: 1; }
+.rp-ans { display: grid; place-items: center; font-family: var(--kai); font-size: 26px; line-height: 1; }
 .rp-py { font-family: var(--py); font-size: 15px; color: var(--ink-soft); }
 .rp-mark { font-weight: 800; }
 .rp-mark.ok { color: var(--ok); }
@@ -827,6 +830,7 @@ textarea::placeholder { color: var(--ink-soft); opacity: .8; font-size: 18px; }
         <div class="prompt" id="prompt" hidden>
           <button class="say" id="sayBtn" type="button" aria-label="唸給我聽" hidden></button>
           <button class="tool" id="reportBtn" type="button">成績單</button>
+          <button class="tool" id="redoAllBtn" type="button">全部重寫</button>
         </div>
         <div class="page" id="page" aria-label="一組四個米字格"></div>
         <div class="below" id="below">
@@ -845,6 +849,7 @@ textarea::placeholder { color: var(--ink-soft); opacity: .8; font-size: 18px; }
           <div class="r-sub" id="rSub"></div>
           <div class="checks" id="rChecks"></div>
           <div class="r-actions">
+            <button class="r-again" id="redoBtn" type="button">重寫</button>
             <button class="r-again" id="againBtn" type="button">再寫一次</button>
             <button class="r-next" id="goNextBtn" type="button">下一個字</button>
           </div>
@@ -1352,7 +1357,7 @@ const GRADE = (() => {
     demo: $('demo'), cap: $('cap'), demoBtn: $('demoBtn'),
     prompt: $('prompt'), sayBtn: $('sayBtn'), reportBtn: $('reportBtn'),
     result: $('result'), rStars: $('rStars'), rTitle: $('rTitle'), rScore: $('rScore'), rAnswer: $('rAnswer'), rSub: $('rSub'), rChecks: $('rChecks'),
-    againBtn: $('againBtn'), goNextBtn: $('goNextBtn'),
+    againBtn: $('againBtn'), goNextBtn: $('goNextBtn'), redoBtn: $('redoBtn'), redoAllBtn: $('redoAllBtn'),
     prevBtn: $('prevBtn'), nextBtn: $('nextBtn'), swatches: $('swatches'), sizes: $('sizes'),
     undoBtn: $('undoBtn'), clearBtn: $('clearBtn'), doneBtn: $('doneBtn'),
     progress: $('progress'), total: $('total'), sampleTag: $('sampleTag'), parentBtn: $('parentBtn'), rateBtn: $('rateBtn'),
@@ -1545,7 +1550,7 @@ const GRADE = (() => {
         for (let i = 1; i < m.length; i++) L += Math.hypot(m[i][0] - m[i - 1][0], m[i][1] - m[i - 1][1]);
         return Math.max(L, 1);
       });
-      return { paths, meds: raw.m, lens, n: paths.length };
+      return { paths, meds: raw.m, lens, n: paths.length, raw: raw.s };
     } catch (e) { return null; }
   }
   function getStrokes(ch) {
@@ -1558,6 +1563,22 @@ const GRADE = (() => {
       if (!d) noData.add(ch);
       return d;
     });
+  }
+  // A character for the interface (answers, lists, chips): drawn from the stroke data when it is available,
+  // otherwise typed in the Kai font and swapped for the drawing once the data arrives.
+  function glyphSVG(ch, d) {
+    return '<svg class="gl" viewBox="0 0 1024 1024" role="img" aria-label="' + esc(ch) + '"><g transform="translate(0 900) scale(1 -1)">' +
+      d.raw.map((p) => '<path d="' + p + '"/>').join('') + '</g></svg>';
+  }
+  function glyphHTML(ch) {
+    const d = strokeCache.get(ch);
+    if (d && d.raw) return glyphSVG(ch, d);
+    if (!strokeCache.has(ch)) getStrokes(ch).then((dd) => { if (dd) upgradeGlyphs(ch); });
+    return '<span class="gl-t" data-gl="' + esc(ch) + '">' + esc(ch) + '</span>';
+  }
+  function upgradeGlyphs(ch) {
+    const d = strokeCache.get(ch); if (!d || !d.raw) return;
+    document.querySelectorAll('.gl-t').forEach((el) => { if (el.dataset.gl === ch) el.outerHTML = glyphSVG(ch, d); });
   }
   // Data coordinates: 1024-unit em box, y pointing up with the baseline offset at 900.
   function emBox(S) {
@@ -1841,7 +1862,7 @@ const GRADE = (() => {
           v.judge.innerHTML = '<span class="jnone">' + (has ? '還沒按「寫好了」' : '還沒寫') + '</span>';
         } else {
           const okP = judgedOk(r), badP = judgedWrong(r);
-          v.judge.innerHTML = '<span class="jans" aria-hidden="true">' + esc(cells[i].ch) + '</span>' +
+          v.judge.innerHTML = '<span class="jans">' + glyphHTML(cells[i].ch) + '</span>' +
             '<button type="button" class="jb ok" data-v="1" aria-pressed="' + okP + '" aria-label="第 ' + (i + 1) + ' 個字「' + esc(cells[i].ch) + '」寫對了">' + ICON.check + '</button>' +
             '<button type="button" class="jb bad" data-v="0" aria-pressed="' + badP + '" aria-label="第 ' + (i + 1) + ' 個字「' + esc(cells[i].ch) + '」寫錯了">' + ICON.cross + '</button>';
         }
@@ -1928,7 +1949,8 @@ const GRADE = (() => {
     e.preventDefault();
     if (i !== curIdx()) goTo(i, true);   // writing in another cell makes it the current one
     if (isDict() && resOf(i)) {
-      if (performance.now() - lockToastAt > 2500) { lockToastAt = performance.now(); toast('這個字已經交了，按「下一個」繼續'); }
+      if (els.result.hidden) showDictResult(resOf(i), true);   // shows its 「重寫」 button
+      if (performance.now() - lockToastAt > 2500) { lockToastAt = performance.now(); toast('這個字已經交了。要重寫，按下面的「重寫」。'); }
       return;
     }
     if (demo) stopDemo();   // touching the paper ends the demo and starts writing
@@ -2284,11 +2306,12 @@ const GRADE = (() => {
     const notes = r.structure ? r.structure.notes : [];
     els.rChecks.innerHTML = (r.structure && !notes.length ? '<span class="ck ok">結構很好</span>' : notes.map((n) => '<span class="ck bad">' + esc(NOTE_TEXT[n] || n) + '</span>').join(''));
     if (judgedWrong(r)) {
-      els.rAnswer.innerHTML = '<span>正確的字</span><span class="ans">' + esc(cell.ch) + '</span>';
+      els.rAnswer.innerHTML = '<span>正確的字</span><span class="ans">' + glyphHTML(cell.ch) + '</span>';
       els.rAnswer.hidden = false;
     }
     els.againBtn.hidden = !strokeCache.get(cell.ch);
     els.againBtn.textContent = '看正確寫法';
+    els.redoBtn.hidden = false;
     const nxt = nextOpenCell(state.dict.idx);
     els.goNextBtn.textContent = nxt < 0 ? '看成績單' : (nxt > state.dict.idx ? '下一個' : '去還沒寫的字');
     els.result.hidden = false;
@@ -2296,6 +2319,36 @@ const GRADE = (() => {
       restart(els.result, 'in');
       chime(os != null && ss != null ? (os + ss >= 190 ? 4 : 3) : 2);
     }
+  }
+  // Clear one answer (and any parent mark) so the child can write that character again.
+  function redoCell(i) {
+    if (!resOf(i)) return;
+    delete state.dict.res[i];
+    state.dictInk[i] = { strokes: [], history: [] };
+    saveDict();
+    stopDemo();
+    hideResult();
+    renderCells(-1); redrawInk(); renderStrip(); renderHeader(); updateButtons();
+    setCaption('重寫這個字', 1400);
+  }
+  // Start the whole list again: every answer and mark is cleared, the words stay.
+  let redoAllArmed = false, redoAllT = 0;
+  function disarmRedoAll() { redoAllArmed = false; clearTimeout(redoAllT); els.redoAllBtn.textContent = '全部重寫'; els.redoAllBtn.classList.remove('armed'); }
+  function redoAll() {
+    if (!Object.keys(state.dict.res).length && !Object.keys(state.dictInk).length) { toast('還沒有寫過的字'); return; }
+    if (!redoAllArmed) {
+      redoAllArmed = true;
+      els.redoAllBtn.textContent = '再按一次，全部重寫';
+      els.redoAllBtn.classList.add('armed');
+      redoAllT = setTimeout(disarmRedoAll, 3500);
+      return;
+    }
+    disarmRedoAll();
+    if (rating) setRating(false);
+    state.dict.res = {}; state.dictInk = {}; state.dict.idx = 0;
+    saveDict();
+    goTo(0);
+    toast('全部重新聽寫，從第一個字開始。');
   }
   function goNextDict() {
     const nxt = nextOpenCell(state.dict.idx);
@@ -2369,7 +2422,7 @@ const GRADE = (() => {
       const r = vals[i];
       const mark = !r ? '' : (judgedOk(r) ? '<span class="rp-mark ok">✓</span>' : (judgedWrong(r) ? '<span class="rp-mark bad">✗</span>' : '<span class="rp-mark q" title="待批改">?</span>'));
       // the answer is shown only after the child has written that character
-      const ans = r ? '<span class="rp-ans">' + esc(cell.ch) + '</span>' : '';
+      const ans = r ? '<span class="rp-ans">' + glyphHTML(cell.ch) + '</span>' : '';
       const os = orderScore(r), ss = structScore(r);
       const score = '<span class="rp-score">' + (r ? '<span>筆順 ' + (os == null ? '—' : os) + '</span> · <span>結構 ' + (ss == null ? '—' : ss) + '</span>' : '還沒寫') + '</span>';
       const judge = r && rating
@@ -2496,7 +2549,7 @@ const GRADE = (() => {
       const pips = Array.from({ length: MAX_STARS }, (_, k) => '<span class="' + (k < b ? 'on' : '') + '">' + ICON.star + '</span>').join('');
       return '<button type="button" class="slot' + (i === state.idx ? ' on' : '') + '" data-i="' + i + '"' +
         (i === state.idx ? ' aria-current="true"' : '') +
-        ' aria-label="第 ' + (i + 1) + ' 個字 ' + ch + '，' + b + ' 顆星"><span class="mini">' + ch + '</span><span class="pips">' + pips + '</span></button>';
+        ' aria-label="第 ' + (i + 1) + ' 個字 ' + ch + '，' + b + ' 顆星"><span class="mini">' + glyphHTML(ch) + '</span><span class="pips">' + pips + '</span></button>';
     }).join('');
   }
   function centerSlot() {
@@ -2614,6 +2667,8 @@ const GRADE = (() => {
   els.doneBtn.addEventListener('click', done);
   els.againBtn.addEventListener('click', () => { if (isDict()) playDemo(); });
   els.goNextBtn.addEventListener('click', () => { if (isDict()) goNextDict(); });
+  els.redoBtn.addEventListener('click', () => { if (isDict()) redoCell(state.dict.idx); });
+  els.redoAllBtn.addEventListener('click', () => { if (isDict()) redoAll(); });
   els.rateDone.addEventListener('click', () => setRating(false));
   els.sayBtn.addEventListener('click', say);
   els.reportBtn.addEventListener('click', openReport);
@@ -2708,7 +2763,7 @@ const GRADE = (() => {
     const A = Array.from(raw), B = Array.from(cv);
     if (A.length === B.length) for (let i = 0; i < A.length; i++) if (A[i] !== B[i]) changed.add(B[i]);
     els.chips.innerHTML = list.map((ch) =>
-      '<span class="chip' + (changed.has(ch) ? ' conv' : '') + '"' + (changed.has(ch) ? ' title="已轉成' + scriptWord() + '"' : '') + '>' + ch + '</span>'
+      '<span class="chip' + (changed.has(ch) ? ' conv' : '') + '"' + (changed.has(ch) ? ' title="已轉成' + scriptWord() + '"' : '') + '>' + glyphHTML(ch) + '</span>'
     ).join('');
     let msg = '', warn = false;
     const st = libs.occ.status;
@@ -2759,7 +2814,7 @@ const GRADE = (() => {
       return { t: w.t, py: py.slice(), n };
     });
     els.wlist.innerHTML = draftWords.map((w, i) =>
-      '<div class="wrow"><div class="wchars">' + Array.from(w.t).map((ch) => '<span class="chip" data-ch="' + esc(ch) + '">' + esc(ch) + '</span>').join('') + '</div>' +
+      '<div class="wrow"><div class="wchars">' + Array.from(w.t).map((ch) => '<span class="chip" data-ch="' + esc(ch) + '">' + glyphHTML(ch) + '</span>').join('') + '</div>' +
       '<input class="pyin' + (w.py.filter(Boolean).length === w.n ? '' : ' bad') + '" data-w="' + i + '" value="' + esc(w.py.join(' ')) + '" aria-label="「' + esc(w.t) + '」的拼音" autocomplete="off" autocapitalize="off" spellcheck="false">' +
       '</div>'
     ).join('');
@@ -2960,7 +3015,7 @@ const GRADE = (() => {
   /* ---------- 簡體: interface text follows the chosen script ----------
      The page is written in traditional characters; for 簡體 every interface string is mapped character by
      character (the map is built from this page's own text, where no character needs context). */
-  const T2S_PAIRS = '練练紅红聽听寫写範范長长評评開开設设啟启單单區区組组唸念給给績绩個个筆笔顏颜細细體体灣湾簡简習习轉转換换後后淺浅顯显動动關关詞词語语產产請请檢检節节間间虛虚線线沒没順顺資资讀读閉闭紀纪錄录來来數数課课為为準准錯错學学師师黃黄綠绿藍蓝優优對对畫画國国確确麼么記记這这嗎吗過过還还經经繼继續续著着媽妈結结點点顆颗邊边裡里構构電电腦脑會会豈岂載载輸输現现複复從从進进網网試试認认';
+  const T2S_PAIRS = '練练紅红聽听寫写範范長长評评開开設设啟启單单區区組组唸念給给績绩個个筆笔顏颜細细體体灣湾簡简習习轉转換换後后淺浅顯显動动關关詞词語语產产請请檢检節节間间虛虚線线沒没順顺資资讀读閉闭紀纪錄录來来數数課课為为準准錯错學学師师黃黄綠绿藍蓝優优對对畫画國国確确麼么記记這这嗎吗過过還还經经著着媽妈結结點点顆颗邊边裡里構构從从電电腦脑會会豈岂載载輸输現现複复進进網网試试認认';
   const T2S = new Map(), S2T = new Map();
   { const a = Array.from(T2S_PAIRS); for (let i = 0; i + 1 < a.length; i += 2) { T2S.set(a[i], a[i + 1]); S2T.set(a[i + 1], a[i]); } }
   const UI_ATTRS = ['aria-label', 'title', 'placeholder'];
