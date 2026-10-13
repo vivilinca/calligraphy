@@ -1,0 +1,3056 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>米字格練字</title>
+<meta name="description" content="給孩子在 iPad 上練寫中文字：米字格描紅、筆順示範、聽寫。繁體（香港、台灣）和簡體都可以。">
+<meta name="theme-color" content="#e3eae6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121817" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="米字格">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta property="og:title" content="米字格練字">
+<meta property="og:description" content="米字格描紅、筆順示範、聽寫，適合在 iPad 上用 Apple Pencil 或手指練字。">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Andika&display=swap">
+<style>
+/* Layout: a practice sheet on a desk. Character margin on the left, one big 米字格 page in the middle,
+   paint pots on the right (in portrait: margin on top, pots below). The paper stays paper in both themes.
+   Dictation puts a pinyin line above the page and hides every trace of the answer. */
+:root {
+  --desk: #e3eae6;
+  --panel: #edf2ef;
+  --raise: #fbfdfc;
+  --ink: #1b2423;
+  --ink-soft: #56635f;
+  --line: #c5d0cb;
+  --seal: #c6302a;
+  --seal-ink: #ffffff;
+  --gold: #dd9a0f;
+  --ok: #1f7f45;
+  --focus: #1f6fe5;
+  --scrim: rgba(20, 28, 27, .45);
+  --shadow: 0 1px 2px rgba(27, 36, 35, .08), 0 12px 32px -12px rgba(27, 36, 35, .28);
+  --shadow-sm: 0 1px 2px rgba(27, 36, 35, .1), 0 4px 10px -4px rgba(27, 36, 35, .2);
+  /* paper world: identical in both themes */
+  --paper: #fffef9;
+  --paper-ink: #1c1c1c;
+  --grid: #d8352b;
+  --stamp: #c6302a;
+  --kai: "LXGW WenKai TC", "Kaiti TC", "BiauKai", "DFKai-SB", "STKaiti", "KaiTi", serif;
+  --ui: "PingFang TC", "Heiti TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+  --py: "Andika", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --mini-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 3V97M3 50H97M3 3L97 97M97 3L3 97' fill='none' stroke='%23d8352b' stroke-width='1.6' stroke-dasharray='5 4'/%3E%3Crect x='2' y='2' width='96' height='96' fill='none' stroke='%23d8352b' stroke-width='4'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #121817;
+    --panel: #18201f;
+    --raise: #212b2a;
+    --ink: #e8efec;
+    --ink-soft: #97a6a2;
+    --line: #34413f;
+    --seal: #d9443a;
+    --seal-ink: #ffffff;
+    --gold: #f2b22c;
+    --ok: #5cc98a;
+    --focus: #7cc4ff;
+    --scrim: rgba(0, 0, 0, .6);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 34px -12px rgba(0, 0, 0, .7);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 10px -4px rgba(0, 0, 0, .5);
+    --paper: #f6f3eb;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #121817;
+  --panel: #18201f;
+  --raise: #212b2a;
+  --ink: #e8efec;
+  --ink-soft: #97a6a2;
+  --line: #34413f;
+  --seal: #d9443a;
+  --seal-ink: #ffffff;
+  --gold: #f2b22c;
+  --ok: #5cc98a;
+  --focus: #7cc4ff;
+  --scrim: rgba(0, 0, 0, .6);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 34px -12px rgba(0, 0, 0, .7);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4), 0 4px 10px -4px rgba(0, 0, 0, .5);
+  --paper: #f6f3eb;
+  color-scheme: dark;
+}
+
+[hidden] { display: none !important; }
+html { height: 100%; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+button:disabled { cursor: default; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+svg { display: block; }
+
+/* ---------- frame ---------- */
+.app {
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 10px 14px;
+  padding-inline: 16px;
+}
+.top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mark {
+  flex: none;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  background: var(--seal);
+  color: var(--seal-ink);
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  border-radius: 6px;
+  transform: rotate(-4deg);
+  box-shadow: inset 0 0 0 2px var(--seal), inset 0 0 0 3.5px rgba(255, 255, 255, .85);
+}
+h1 {
+  margin: 0;
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modes, .seg, .ptabs {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.modes { flex: none; }
+.modes button, .seg button, .ptabs button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.modes button { font-family: var(--kai); font-size: 18px; padding: 0 16px; }
+.modes button[aria-selected="true"], .ptabs button[aria-selected="true"], .seg button[aria-pressed="true"] {
+  background: var(--raise); color: var(--ink); box-shadow: var(--shadow-sm);
+}
+.tag {
+  flex: none;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.spacer { flex: 1; min-width: 0; }
+.progress { color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.total {
+  flex: none;
+  display: flex; align-items: center; gap: 4px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.total svg { width: 20px; height: 20px; color: var(--gold); }
+.total.dictotal svg { color: var(--ok); }
+.total small { color: var(--ink-soft); font-weight: 500; }
+.parent {
+  flex: none;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 46px;
+  padding: 5px 14px;
+  border-radius: 12px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  line-height: 1.2;
+}
+.parent b { font-size: 14px; font-weight: 700; }
+.parent small { font-size: 11px; color: var(--ink-soft); }
+.parent::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  height: 4px; width: 0;
+  background: var(--seal);
+}
+.parent.holding::after { width: 100%; transition: width .9s linear; }
+
+/* ---------- work area ---------- */
+.work {
+  min-height: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas: "strip" "stage" "tools";
+}
+
+/* character margin */
+.strip {
+  grid-area: strip;
+  position: relative;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 4px 6px;
+  scrollbar-width: thin;
+}
+.slot {
+  flex: none;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px;
+  border-radius: 12px;
+}
+.slot.on { background: var(--raise); box-shadow: 0 0 0 2.5px var(--ink); }
+.slot.wstart { margin-inline-start: 10px; }
+.slot.wstart:first-child { margin-inline-start: 0; }
+.mini {
+  width: 54px; height: 54px;
+  display: grid; place-items: center;
+  background: var(--paper) var(--mini-grid) center / 100% 100% no-repeat;
+  color: var(--paper-ink);
+  font-family: var(--kai);
+  font-size: 40px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.pybox {
+  width: 54px; height: 54px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  font-family: var(--py);
+  font-size: 17px;
+  color: var(--ink);
+}
+.mk { font-size: 13px; font-weight: 800; line-height: 1; min-height: 13px; color: var(--line); }
+.mk.ok { color: var(--ok); }
+.mk.bad { color: var(--seal); }
+.mk.q { color: var(--gold); }
+.pips { display: flex; gap: 1px; }
+.pips svg { width: 10px; height: 10px; color: var(--line); }
+.pips .on svg { color: var(--gold); }
+
+/* stage */
+.stage {
+  grid-area: stage;
+  min-width: 0; min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+.prompt {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  min-width: 0;
+}
+.say {
+  flex: none;
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  box-shadow: var(--shadow-sm);
+}
+.say svg { width: 26px; height: 26px; }
+.nav {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--raise);
+  box-shadow: var(--shadow-sm);
+  display: grid; place-items: center;
+}
+.nav svg { width: 26px; height: 26px; }
+.nav:disabled { opacity: .3; box-shadow: none; }
+/* a worksheet row: four 米字格 cells, the result below */
+.holder {
+  align-self: stretch;
+  min-width: 0; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  gap: 14px;
+  overflow-x: hidden; overflow-y: auto;   /* centred when it fits, scrolls (instead of overlapping) when it does not */
+}
+.holder::before, .holder::after { content: ""; flex: 1 0 0px; margin-block: -7px; }
+.page {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), var(--s, 200px));
+  gap: var(--gap, 14px);
+  justify-content: center;
+}
+.cell { display: grid; gap: 4px; justify-items: center; }
+.cell.empty { visibility: hidden; }
+.pylab {
+  height: 34px;
+  display: grid; place-items: end center;
+  font-family: var(--py);
+  font-size: 26px;
+  line-height: 1.2;
+  color: var(--ink-soft);
+  border-bottom: 4px solid transparent;
+  padding: 0 6px;
+}
+.cell.on .pylab { color: var(--ink); border-bottom-color: var(--seal); }
+.pylab.ok { color: var(--ok); }
+.pylab.bad { color: var(--seal); }
+.sheet {
+  position: relative;
+  width: var(--s, 200px);
+  height: var(--s, 200px);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  outline: 3px solid transparent;
+  outline-offset: 3px;
+  transition: outline-color .15s ease;
+}
+.cell.on .sheet { outline-color: var(--ink); box-shadow: var(--shadow); }
+/* parent's stars under each traced character */
+.rate {
+  display: flex; gap: 2px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  touch-action: none;
+}
+.rate .st svg { width: max(14px, calc(var(--s, 200px) * .1)); height: max(14px, calc(var(--s, 200px) * .1)); color: var(--line); }
+.rate .st.on svg { color: var(--gold); }
+.rate.editing { background: var(--raise); box-shadow: 0 0 0 2px var(--gold); cursor: pointer; }
+.rate.editing .st svg { width: max(20px, calc(var(--s, 200px) * .14)); height: max(20px, calc(var(--s, 200px) * .14)); }
+.rate-bar {
+  width: 100%;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 16px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--raise);
+  border: 2px solid var(--gold);
+  font-size: 15px; line-height: 1.5; text-align: center;
+}
+/* dictation: the parent marks each written character right or wrong */
+.judge {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  max-width: calc(var(--s, 200px) + 10px);
+  min-height: 46px;
+  padding: 3px 6px;
+  border-radius: 12px;
+  background: var(--raise);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+.judge .jans { font-family: var(--kai); font-size: clamp(20px, calc(var(--s, 200px) * .16), 28px); line-height: 1; min-width: 22px; text-align: center; color: var(--ink); }
+.judge .jnone { font-size: 13px; color: var(--ink-soft); padding: 0 6px; }
+.jb {
+  width: clamp(32px, calc(var(--s, 200px) * .26), 44px); height: 38px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: var(--panel);
+  color: var(--ink-soft);
+}
+.jb svg { width: 22px; height: 22px; }
+.jb.ok[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: #ffffff; }
+.jb.bad[aria-pressed="true"] { background: var(--seal); border-color: var(--seal); color: #ffffff; }
+body.rating .tools { opacity: .35; pointer-events: none; }
+body.rating .sheet .ink { cursor: default; }
+.sheet canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.sheet .ink { touch-action: none; cursor: crosshair; transition: opacity .25s ease; }
+#demo { pointer-events: none; transition: opacity .5s ease; }
+#demo.fade { opacity: 0; }
+.sheet.demoing .ink { opacity: .15; }
+.below {
+  width: min(460px, 100%);
+  min-height: var(--below, 250px);
+  display: grid; justify-items: center; align-content: start; gap: 10px;
+}
+.hint-line { color: var(--ink-soft); font-size: 14px; text-align: center; padding-top: 6px; }
+.cap {
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--desk);
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 17px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+.sheet.thud { animation: thud .34s ease-out; }
+@keyframes thud { 0% { transform: scale(1); } 45% { transform: scale(.985); } 100% { transform: scale(1); } }
+
+.stamp {
+  position: absolute;
+  top: 4%; right: 4%;
+  width: 27%;
+  aspect-ratio: 1;
+  display: grid; place-items: center;
+  background: var(--stamp);
+  color: #ffffff;
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: calc(var(--s, 200px) * .17);
+  line-height: 1;
+  border-radius: 9%;
+  opacity: .9;
+  transform: rotate(-9deg);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+.stamp::before {
+  content: "";
+  position: absolute; inset: 7%;
+  border: max(1.5px, calc(var(--s, 200px) * .008)) solid rgba(255, 255, 255, .9);
+  border-radius: 6%;
+}
+.stamp.two { writing-mode: vertical-rl; font-size: calc(var(--s, 200px) * .095); letter-spacing: .02em; }
+.stamp.in { animation: stampIn .34s cubic-bezier(.2, .9, .3, 1.25) both; }
+@keyframes stampIn {
+  from { transform: scale(1.9) rotate(-24deg); opacity: 0; }
+  70% { opacity: .95; }
+  to { transform: scale(1) rotate(-9deg); opacity: .9; }
+}
+/* teacher's red tick or cross for dictation */
+.stamp.tick { background: none; width: 36%; top: 2%; right: 2%; color: var(--stamp); opacity: .92; transform: none; }
+.stamp.tick::before { display: none; }
+.stamp.tick.in { animation: none; }
+.stamp.tick svg { width: 100%; height: 100%; overflow: visible; }
+.stamp.tick path { stroke-dasharray: 200; stroke-dashoffset: 0; }
+.stamp.tick.in path { animation: draw .45s ease-out both; }
+.stamp.tick.in path + path { animation-delay: .2s; }
+@keyframes draw { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+
+.result {
+  width: 100%;
+  display: grid; justify-items: center; gap: 6px;
+  padding: 14px 16px 16px;
+  text-align: center;
+  background: var(--raise);
+  color: var(--ink);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+.result.in { animation: rise .26s ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.stars { display: flex; gap: 4px; }
+.stars svg { width: 36px; height: 36px; color: var(--line); }
+.stars .on svg { color: var(--gold); }
+.stars .on { animation: pop .38s cubic-bezier(.2, 1.5, .4, 1) both; }
+@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+.checks { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.ck {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+.ck.ok { color: var(--ok); }
+.ck.bad { color: var(--seal); }
+.r-title { font-family: var(--kai); font-weight: 700; font-size: 26px; text-wrap: balance; }
+.r-score { display: flex; justify-content: center; gap: 28px; }
+.r-score .sc { display: grid; justify-items: center; gap: 4px; }
+.r-score .sc b { font-size: 32px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.r-score .sc b.hi { color: var(--ok); }
+.r-score .sc b.lo { color: var(--seal); }
+.r-score .sc small { font-size: 13px; font-weight: 700; letter-spacing: .12em; color: var(--ink-soft); }
+.r-wait { font-family: var(--ui, system-ui); font-size: 13px; font-weight: 700; color: var(--ink-soft); padding: 3px 10px; border-radius: 999px; border: 1px dashed var(--gold); white-space: nowrap; }
+.r-title:has(.r-wait) { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; }
+.r-answer { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); font-size: 14px; }
+.r-answer .ans {
+  width: 60px; height: 60px;
+  display: grid; place-items: center;
+  background: var(--paper) var(--mini-grid) center / 100% 100% no-repeat;
+  color: var(--paper-ink);
+  font-family: var(--kai);
+  font-size: 46px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.r-sub { color: var(--ink-soft); font-size: 15px; text-wrap: balance; }
+.r-actions { display: flex; gap: 10px; width: 100%; margin-top: 6px; }
+.r-actions button {
+  flex: 1;
+  min-height: 50px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 17px;
+}
+.r-again { background: var(--panel); border: 1px solid var(--line); }
+.r-next { background: var(--ink); color: var(--desk); }
+
+/* tools */
+.tools {
+  grid-area: tools;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px 20px;
+}
+.group { display: grid; gap: 6px; }
+.glabel { font-size: 12px; letter-spacing: .1em; color: var(--ink-soft); }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--c);
+  display: grid; place-items: center;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .5), var(--shadow-sm);
+  transition: transform .12s ease;
+}
+.sw.light-check { color: #1c1c1c; }
+.sw svg { width: 22px; height: 22px; opacity: 0; }
+.sw[aria-checked="true"] { transform: scale(1.1); box-shadow: 0 0 0 3px var(--desk), 0 0 0 6px var(--ink); }
+.sw[aria-checked="true"] svg { opacity: 1; }
+.sw.rainbow { background: conic-gradient(#e2382f, #f57c00, #f0b400, #259b4a, #1f6fe5, #8a3ff0, #ef4f9b, #e2382f); }
+.sizes { display: flex; gap: 8px; }
+.sz {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+}
+.sz[aria-checked="true"] { border-color: transparent; box-shadow: 0 0 0 2.5px var(--ink); }
+.sz i { display: block; border-radius: 50%; width: var(--d); height: var(--d); background: var(--pen); }
+.acts { display: flex; gap: 8px; }
+.tool {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: var(--raise);
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tool svg { width: 20px; height: 20px; }
+.tool:disabled { opacity: .4; }
+.tool.show { border: 2px solid var(--ink); }
+.done {
+  min-height: 56px;
+  padding: 0 26px;
+  border-radius: 18px;
+  background: var(--seal);
+  color: var(--seal-ink);
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 23px;
+  letter-spacing: .06em;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 8px 16px -8px var(--seal);
+  white-space: nowrap;
+}
+.done svg { width: 24px; height: 24px; }
+.done svg, .tool svg, .nav svg { flex: none; }
+.done:active { transform: translateY(1px); }
+.done:disabled { opacity: .6; }
+
+/* landscape iPad: margin | sheet | pots */
+@media (min-aspect-ratio: 5/4) and (min-width: 760px) {
+  .work {
+    grid-template-columns: 92px minmax(0, 1fr) 158px;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: "strip stage tools";
+  }
+  .strip { flex-direction: column; align-items: center; overflow-x: hidden; overflow-y: auto; padding: 6px 4px; }
+  .slot.wstart { margin-inline-start: 0; margin-top: 12px; }
+  .slot.wstart:first-child { margin-top: 0; }
+  .mini, .pybox { width: 62px; height: 62px; }
+  .mini { font-size: 46px; }
+  .tools {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding: 10px 10px;
+    gap: 16px;
+  }
+  .swatches { display: grid; grid-template-columns: repeat(3, 40px); justify-content: space-between; gap: 12px 8px; }
+  .sw { width: 40px; height: 40px; }
+  .sizes { justify-content: space-between; }
+  .sz { width: 40px; height: 40px; }
+  .acts { flex-direction: column; }
+  .done { margin-top: auto; padding: 0 10px; gap: 6px; }
+}
+@media (max-width: 560px) {
+  .progress, .tag, h1 { display: none; }
+  .modes button { padding: 0 10px; font-size: 16px; }
+  .top { gap: 8px; }
+  .parent { padding: 4px 8px; min-height: 42px; }
+  .parent b { font-size: 13px; }
+  .parent small, .total small { display: none; }
+  .nav { width: 42px; height: 42px; }
+  .stage { column-gap: 6px; }
+  .sw, .sz { width: 40px; height: 40px; }
+  .glabel { display: none; }
+  .tools { gap: 10px 12px; }
+  .pylab { font-size: 20px; height: 28px; }
+  .say { width: 44px; height: 44px; }
+}
+
+/* ---------- parent panel + report ---------- */
+.scrim {
+  position: fixed; inset: 0;
+  z-index: 20;
+  display: grid; place-items: center;
+  padding: 16px;
+  background: var(--scrim);
+}
+.panel {
+  width: min(600px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  display: grid; gap: 18px;
+  padding: 22px;
+  background: var(--raise);
+  color: var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+.panel h2 { margin: 0; font-family: var(--kai); font-size: 26px; font-weight: 700; }
+.panel .lead { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+.pane { display: grid; gap: 18px; }
+.field { display: grid; gap: 8px; min-width: 0; }
+.f { font-weight: 700; font-size: 14px; }
+textarea {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--kai);
+  font-size: 22px;
+  line-height: 1.5;
+  -webkit-user-select: text;
+  user-select: text;
+}
+textarea::placeholder { color: var(--ink-soft); opacity: .8; font-size: 18px; }
+.status { font-size: 13px; color: var(--ink-soft); }
+.status.warn { color: var(--seal); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 42px; }
+.chip {
+  position: relative;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  background: var(--paper) var(--mini-grid) center / 100% 100% no-repeat;
+  color: var(--paper-ink);
+  font-family: var(--kai);
+  font-size: 30px;
+  line-height: 1;
+  border-radius: 3px;
+}
+.chip.conv::after {
+  content: "";
+  position: absolute; top: -4px; right: -4px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--seal);
+  box-shadow: 0 0 0 2px var(--raise);
+}
+.chip.nodata { outline: 2px dashed var(--gold); outline-offset: 2px; }
+.hint { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+.wlist { display: grid; gap: 8px; }
+.wrow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.wchars { display: flex; flex-wrap: wrap; gap: 4px; }
+.wchars .chip { width: 38px; height: 38px; font-size: 27px; }
+.pyin {
+  flex: 1;
+  min-width: 150px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--ink);
+  font-family: var(--py);
+  font-size: 20px;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.pyin.bad { border: 2px solid var(--seal); }
+.panel-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.btn { min-height: 48px; padding: 0 20px; border-radius: 14px; font-weight: 700; font-size: 16px; }
+.btn.primary { background: var(--ink); color: var(--desk); }
+.btn.quiet { background: var(--panel); border: 1px solid var(--line); }
+.link { margin-left: auto; padding: 10px 4px; font-size: 14px; color: var(--seal); font-weight: 600; }
+
+.report { width: min(780px, 100%); }
+.rp-sum { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 28px; }
+.rp-big b { font-size: 46px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.rp-big small { margin-left: 6px; color: var(--ink-soft); font-size: 15px; font-weight: 600; }
+.rp-big.right b { color: var(--ok); }
+.rp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.rp-item {
+  display: grid; justify-items: center; align-content: start; gap: 4px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.rp-item canvas { width: 76px; height: 76px; border-radius: 3px; }
+.rp-line { display: flex; align-items: center; gap: 6px; }
+.rp-ans { font-family: var(--kai); font-size: 24px; line-height: 1; }
+.rp-py { font-family: var(--py); font-size: 15px; color: var(--ink-soft); }
+.rp-mark { font-weight: 800; }
+.rp-mark.ok { color: var(--ok); }
+.rp-mark.bad { color: var(--seal); }
+.rp-mark.q { color: var(--gold); }
+.rp-score { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; text-align: center; }
+.rp-score span { white-space: nowrap; }
+.rp-judge { display: flex; gap: 6px; }
+.rp-judge .jb { width: 40px; height: 34px; }
+.rp-judge .jb svg { width: 18px; height: 18px; }
+.rp-note { flex-basis: 100%; color: var(--ink-soft); font-size: 14px; }
+
+/* ---------- toast + confetti ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  translate: -50% 0;
+  z-index: 30;
+  width: max-content;
+  max-width: min(90vw, 480px);
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--desk);
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 25; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">字</span>
+      <h1>米字格練字</h1>
+    </div>
+    <div class="modes" role="tablist" aria-label="模式">
+      <button type="button" role="tab" id="tabPractice" data-mode="practice">描紅</button>
+      <button type="button" role="tab" id="tabDict" data-mode="dict">聽寫</button>
+    </div>
+    <span class="tag" id="sampleTag" hidden>範例字</span>
+    <span class="spacer"></span>
+    <span class="progress" id="progress"></span>
+    <span class="total" id="total"></span>
+    <button class="parent" id="rateBtn" type="button" aria-label="家長評分，按住一秒開始">
+      <b>家長評分</b><small>按住 1 秒</small>
+    </button>
+    <button class="parent" id="parentBtn" type="button" aria-label="家長設定，按住一秒開啟">
+      <b>家長設定</b><small>按住 1 秒</small>
+    </button>
+  </header>
+
+  <main class="work">
+    <nav class="strip" id="strip" aria-label="字的清單"></nav>
+
+    <section class="stage" id="stage" aria-label="寫字區">
+      <button class="nav" id="prevBtn" type="button" aria-label="上一組字"></button>
+      <div class="holder" id="holder">
+        <div class="prompt" id="prompt" hidden>
+          <button class="say" id="sayBtn" type="button" aria-label="唸給我聽" hidden></button>
+          <button class="tool" id="reportBtn" type="button">成績單</button>
+        </div>
+        <div class="page" id="page" aria-label="一組四個米字格"></div>
+        <div class="below" id="below">
+          <canvas id="demo" aria-hidden="true" hidden></canvas>
+          <div class="cap" id="cap" aria-live="polite" hidden></div>
+          <div class="hint-line" id="hintLine"></div>
+          <div class="rate-bar" id="rateBar" hidden>
+            <span id="rateText"></span>
+            <button class="btn primary" id="rateDone" type="button">完成評分</button>
+          </div>
+        <div class="result" id="result" role="status" aria-live="polite" hidden>
+          <div class="stars" id="rStars"></div>
+          <div class="r-title" id="rTitle"></div>
+          <div class="r-score" id="rScore" hidden></div>
+          <div class="r-answer" id="rAnswer" hidden></div>
+          <div class="r-sub" id="rSub"></div>
+          <div class="checks" id="rChecks"></div>
+          <div class="r-actions">
+            <button class="r-again" id="againBtn" type="button">再寫一次</button>
+            <button class="r-next" id="goNextBtn" type="button">下一個字</button>
+          </div>
+        </div>
+        </div>
+      </div>
+      <button class="nav" id="nextBtn" type="button" aria-label="下一組字"></button>
+    </section>
+
+    <section class="tools" aria-label="筆和工具">
+      <div class="group">
+        <div class="glabel">筆的顏色</div>
+        <div class="swatches" id="swatches" role="radiogroup" aria-label="筆的顏色"></div>
+      </div>
+      <div class="group">
+        <div class="glabel">粗細</div>
+        <div class="sizes" id="sizes" role="radiogroup" aria-label="筆的粗細"></div>
+      </div>
+      <div class="group">
+        <div class="glabel">工具</div>
+        <div class="acts">
+          <button class="tool show" id="demoBtn" type="button"></button>
+          <button class="tool" id="undoBtn" type="button"></button>
+          <button class="tool" id="clearBtn" type="button"></button>
+        </div>
+      </div>
+      <button class="done" id="doneBtn" type="button"></button>
+    </section>
+  </main>
+</div>
+
+<div class="scrim" id="panel" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+    <div>
+      <h2 id="panelTitle">家長設定</h2>
+      <p class="lead" id="panelLead"></p>
+    </div>
+    <div class="field">
+      <span class="f" id="lblStd">字體</span>
+      <div class="seg" data-key="standard" role="group" aria-labelledby="lblStd">
+        <button type="button" data-val="hk">香港繁體</button>
+        <button type="button" data-val="tw">台灣繁體</button>
+        <button type="button" data-val="cn">簡體</button>
+      </div>
+      <div class="status" id="stdStatus" aria-live="polite"></div>
+    </div>
+    <div class="ptabs" role="tablist" aria-label="要設定的模式">
+      <button type="button" role="tab" data-tab="practice">描紅練習</button>
+      <button type="button" role="tab" data-tab="dict">聽寫</button>
+    </div>
+
+    <div class="pane" data-pane="practice">
+      <div class="field">
+        <label class="f" for="charInput">要練習的字</label>
+        <textarea id="charInput" rows="3" data-keep autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+        <div class="status" id="convStatus" aria-live="polite"></div>
+        <div class="chips" id="chips" aria-label="轉換後的字"></div>
+        <div class="hint" id="charHint"></div>
+      </div>
+      <div class="settings">
+        <div class="field">
+          <span class="f" id="lblGhost">灰色描字</span>
+          <div class="seg" data-key="ghost" role="group" aria-labelledby="lblGhost">
+            <button type="button" data-val="dark">深</button>
+            <button type="button" data-val="light">淺</button>
+            <button type="button" data-val="off">不顯示</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="f" id="lblAuto">每個字先自動示範</span>
+          <div class="seg" data-key="autoDemo" role="group" aria-labelledby="lblAuto">
+            <button type="button" data-val="on">開</button>
+            <button type="button" data-val="off">關</button>
+          </div>
+        </div>
+        <div class="field">
+          <span class="f" id="lblSpeed">示範速度</span>
+          <div class="seg" data-key="speed" role="group" aria-labelledby="lblSpeed">
+            <button type="button" data-val="slow">慢</button>
+            <button type="button" data-val="normal">正常</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pane" data-pane="dict" hidden>
+      <div class="field">
+        <label class="f" for="dictInput">聽寫的詞語</label>
+        <textarea id="dictInput" rows="3" data-keep autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+        <div class="status" id="dictStatus" aria-live="polite"></div>
+        <div class="wlist" id="wlist"></div>
+        <div class="hint">拼音是自動產生的，多音字請檢查一下，可以直接修改（音節之間用空格分開）。孩子只看得到拼音。虛線框的字沒有筆順資料，只能由家長批改。</div>
+      </div>
+      <div class="settings">
+        <div class="field">
+          <span class="f" id="lblSpeak">孩子可以按喇叭聽讀音</span>
+          <div class="seg" data-key="speak" role="group" aria-labelledby="lblSpeak">
+            <button type="button" data-val="on">開</button>
+            <button type="button" data-val="off">關</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings">
+      <div class="field">
+        <span class="f" id="lblSound">音效</span>
+        <div class="seg" data-key="sound" role="group" aria-labelledby="lblSound">
+          <button type="button" data-val="on">開</button>
+          <button type="button" data-val="off">關</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel-foot">
+      <button class="btn primary" id="saveBtn" type="button">開始練習</button>
+      <button class="btn quiet" id="closeBtn" type="button">關閉</button>
+      <button class="link" id="resetBtn" type="button">清除星星紀錄</button>
+    </div>
+    <div class="hint">筆順和示範字形來自 Make Me a Hanzi 開放資料（Arphic Public License）。少數字的筆順可能和課本不同，以課本為準。拼音由 pinyin-pro 產生。</div>
+  </div>
+</div>
+
+<div class="scrim" id="report" hidden>
+  <div class="panel report" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+    <h2 id="reportTitle">聽寫成績單</h2>
+    <div class="rp-sum" id="rpSum"></div>
+    <div class="rp-grid" id="rpGrid"></div>
+    <div class="panel-foot">
+      <button class="btn primary" id="rpAdd" type="button">把錯字加到描紅練習</button>
+      <button class="btn quiet" id="rpWrong" type="button">只聽寫錯的字</button>
+      <button class="btn quiet" id="rpAgain" type="button">再聽寫一次</button>
+      <button class="btn quiet" id="rpClose" type="button">關閉</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// Dictation grader: order-free comparison of a handwritten character with the target's stroke centre lines.
+// All coordinates are fractions of the sheet (0..1). Template strokes come from the stroke-order data.
+const GRADE = (() => {
+  const STEP = 0.008;
+  const d2 = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const len = (p) => { let L = 0; for (let i = 1; i < p.length; i++) L += d2(p[i], p[i - 1]); return L; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  function sample(p, step) {
+    const L = len(p);
+    const K = Math.max(2, Math.ceil(L / step) + 1);
+    if (p.length < 2 || L === 0) return [[p[0][0], p[0][1]], [p[0][0], p[0][1]]];
+    const out = [];
+    let j = 1, acc = 0;
+    for (let s = 0; s < K; s++) {
+      const t = (L * s) / (K - 1);
+      while (j < p.length - 1 && acc + d2(p[j], p[j - 1]) < t) { acc += d2(p[j], p[j - 1]); j++; }
+      const seg = d2(p[j], p[j - 1]) || 1;
+      const f = clamp((t - acc) / seg, 0, 1);
+      out.push([p[j - 1][0] + (p[j][0] - p[j - 1][0]) * f, p[j - 1][1] + (p[j][1] - p[j - 1][1]) * f]);
+    }
+    return out;
+  }
+  function bbox(pts) {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const [x, y] of pts) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 };
+  }
+  // Flatten strokes into points with stroke id, unsigned direction and a "too short to have a direction" flag.
+  function flatten(strokes) {
+    const pts = [], id = [], ang = [], free = [];
+    strokes.forEach((s, k) => {
+      const short = len(s) < 0.045;
+      s.forEach((p, j) => {
+        const a = s[Math.max(0, j - 3)], b = s[Math.min(s.length - 1, j + 3)];
+        let t = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        if (t < 0) t += Math.PI; if (t >= Math.PI) t -= Math.PI;
+        pts.push(p); id.push(k); ang.push(t); free.push(short);
+      });
+    });
+    return { pts, id, ang, free };
+  }
+  const angDiff = (a, b) => { const d = Math.abs(a - b); return Math.min(d, Math.PI - d); };
+  // Distance from each point of A to the nearest point of B, optionally only counting points running the same way.
+  function nearest(A, B, useDir) {
+    const n = A.pts.length, d = new Float64Array(n), idx = new Int32Array(n);
+    const MAXA = 0.8;   // ~45°
+    for (let i = 0; i < n; i++) {
+      let best = Infinity, bi = 0;
+      const px = A.pts[i][0], py = A.pts[i][1];
+      for (let j = 0; j < B.pts.length; j++) {
+        if (useDir && !A.free[i] && !B.free[j] && angDiff(A.ang[i], B.ang[j]) > MAXA) continue;
+        const dx = B.pts[j][0] - px, dy = B.pts[j][1] - py, v = dx * dx + dy * dy;
+        if (v < best) { best = v; bi = j; }
+      }
+      d[i] = Math.sqrt(best); idx[i] = bi;
+    }
+    return { d, idx };
+  }
+
+  function grade(templateStrokes, userStrokes) {
+    const T = templateStrokes.map((s) => sample(s, STEP));
+    const users = userStrokes.filter((s) => s.length && len(s) >= 0.004);
+    if (!users.length) return { empty: true };
+    const Uraw = users.map((s) => sample(s, STEP));
+    const TF = flatten(T);
+    const UrawAll = Uraw.flat();
+
+    // 1) initial alignment: map the writing's box onto the character's box
+    const bt = bbox(TF.pts), bu = bbox(UrawAll);
+    const big = Math.max(bt.w, bt.h);
+    let sx = bt.w > 0.25 * big && bu.w > 0.02 ? bt.w / bu.w : null;
+    let sy = bt.h > 0.25 * big && bu.h > 0.02 ? bt.h / bu.h : null;
+    if (sx === null) sx = sy === null ? 1 : sy;
+    if (sy === null) sy = sx;
+    sx = clamp(sx, 0.3, 4); sy = clamp(sy, 0.3, 4);
+    let tx = bt.cx - sx * bu.cx, ty = bt.cy - sy * bu.cy;
+    const place = () => flatten(Uraw.map((s) => s.map(([x, y]) => [sx * x + tx, sy * y + ty])));
+
+    // 2) refine with a few rounds of closest-point fitting (scale + shift per axis)
+    for (let it = 0; it < 8; it++) {
+      const W = place();
+      const a = nearest(W, TF, false), b = nearest(TF, W, false);
+      const cut = it < 3 ? 0.12 : 0.07;
+      const pairs = [];
+      for (let i = 0; i < W.pts.length; i++) if (a.d[i] < cut) pairs.push([UrawAll[i], TF.pts[a.idx[i]]]);
+      for (let j = 0; j < TF.pts.length; j++) if (b.d[j] < cut) pairs.push([UrawAll[b.idx[j]], TF.pts[j]]);
+      if (pairs.length < 6) break;
+      const fit = (ax) => {
+        const n = pairs.length;
+        let mu = 0, mt = 0;
+        for (const [u, t] of pairs) { mu += u[ax]; mt += t[ax]; }
+        mu /= n; mt /= n;
+        let cov = 0, vr = 0;
+        for (const [u, t] of pairs) { cov += (u[ax] - mu) * (t[ax] - mt); vr += (u[ax] - mu) ** 2; }
+        return { mu, mt, s: vr / n > 2e-4 ? cov / vr : null };
+      };
+      const fx = fit(0), fy = fit(1);
+      let nsx = fx.s === null ? (fy.s === null ? sx : fy.s) : fx.s;
+      let nsy = fy.s === null ? nsx : fy.s;
+      nsx = clamp(nsx, 0.3, 4); nsy = clamp(nsy, 0.3, 4);
+      if (nsx / nsy > 2) nsx = nsy * 2; else if (nsy / nsx > 2) nsy = nsx * 2;
+      sx = nsx; sy = nsy;
+      tx = fx.mt - sx * fx.mu; ty = fy.mt - sy * fy.mu;
+    }
+
+    // 3) compare, counting only ink that runs the same way as the character's stroke
+    const W = place();
+    const a = nearest(W, TF, true), b = nearest(TF, W, true);
+    const C = 0.045, CT = 0.07;   // CT: the looser tolerance real handwriting needs per stroke
+    const nT = T.length, nU = Uraw.length;
+    const tHit = new Array(nT).fill(0), tHitT = new Array(nT).fill(0), tN = new Array(nT).fill(0), tDist = new Array(nT).fill(0);
+    // Each written point counts only for the character stroke it is closest to (running the same way),
+    // so a stroke can't be "found" in ink that belongs to its neighbour.
+    const own = Array.from({ length: nT }, () => []);
+    for (let i = 0; i < W.pts.length; i++) own[TF.id[a.idx[i]]].push(i);
+    for (let j = 0; j < TF.pts.length; j++) {
+      const k = TF.id[j]; tN[k]++; tDist[k] += Math.min(b.d[j], 0.15);
+      if (b.d[j] < C) tHit[k]++;
+      let best = Infinity;
+      const px = TF.pts[j][0], py = TF.pts[j][1];
+      for (const i of own[k]) {
+        if (!TF.free[j] && !W.free[i] && angDiff(TF.ang[j], W.ang[i]) > 0.8) continue;
+        const dx = W.pts[i][0] - px, dy = W.pts[i][1] - py, v = dx * dx + dy * dy;
+        if (v < best) best = v;
+      }
+      if (Math.sqrt(best) < CT) tHitT[k]++;
+    }
+    const uOnT = new Array(nU).fill(0), uN = new Array(nU).fill(0);
+    for (let i = 0; i < W.pts.length; i++) { const k = W.id[i]; uN[k]++; if (a.d[i] < CT) uOnT[k]++; }
+    let pIn = 0; for (let i = 0; i < W.pts.length; i++) if (a.d[i] < C + 0.005) pIn++;
+    let cIn = 0; for (let j = 0; j < TF.pts.length; j++) if (b.d[j] < C) cIn++;
+    const precision = pIn / W.pts.length, coverage = cIn / TF.pts.length;
+    let mu = 0; for (const v of a.d) mu += Math.min(v, 0.15); mu /= a.d.length;
+    let mt = 0; for (const v of b.d) mt += Math.min(v, 0.15); mt /= b.d.length;
+    const resid = (mu + mt) / 2;
+    const strokeDist = tDist.map((s, k) => s / tN[k]);
+    // strokes of the character the writing never reaches, and written strokes that belong to no part of it
+    const missing = [], extra = [];
+    tHitT.forEach((h, k) => { if (h / tN[k] < 0.5) missing.push(k); });
+    users.forEach((s, k) => { if (len(s) >= 0.04 && uOnT[k] / uN[k] < 0.4) extra.push(k); });
+    // stroke ends: a character stroke whose end isn't reached, or written ink running well past the character
+    let lengthOff = 0;
+    { let start = 0; T.forEach((s, k) => { const e = start + s.length - 1; if (len(templateStrokes[k]) >= 0.05 && (b.d[start] > 0.07 || b.d[e] > 0.07)) lengthOff++; start += s.length; }); }
+    { let start = 0; Uraw.forEach((s, k) => { const e = start + s.length - 1; if (len(users[k]) >= 0.05 && !extra.includes(k) && (a.d[start] > 0.075 || a.d[e] > 0.075)) lengthOff++; start += s.length; }); }
+    const off = d2([bu.cx, bu.cy], [bt.cx, bt.cy]);
+    const outside = bu.x0 < 0.02 || bu.y0 < 0.02 || bu.x1 > 0.98 || bu.y1 > 0.98;
+    const fit = (precision + coverage) / 2 - 3 * resid;
+    return { precision, coverage, resid, fit, missing, extra, lengthOff, strokeDist, worst: Math.max(...strokeDist), sx, sy, tx, ty, size: 1 / Math.sqrt(sx * sy), off, outside, nStrokes: nT };
+  }
+
+  // Decide right or wrong: the writing must fit the target reasonably well, have all its strokes,
+  // no stray strokes, and fit the target at least as well as its simplified form and its look-alikes.
+  // candidates: [{ ch, strokes, simplified: bool }]
+  function judge(targetStrokes, userStrokes, candidates) {
+    const t = grade(targetStrokes, userStrokes);
+    if (t.empty) return { empty: true };
+    // A look-alike can only win if the writing covers all of its strokes
+    // (the simplified form may miss one, since children write it from memory and loosely).
+    let best = null;
+    for (const c of candidates || []) {
+      const r = grade(c.strokes, userStrokes);
+      if (r.empty || r.missing.length > (c.simplified ? 1 : 0)) continue;
+      if (!best || r.fit > best.r.fit) best = { ch: c.ch, simplified: !!c.simplified, r };
+    }
+    const floor = t.coverage >= 0.6 && t.precision >= 0.6 && t.resid <= 0.045;
+    const beaten = best && best.r.fit > t.fit + 0.02;
+    let why = '';
+    if (beaten && best.simplified) why = 'simplified';
+    else if (t.missing.length) why = 'missing';
+    else if (t.extra.length) why = 'extra';
+    else if (!floor || beaten) why = 'shape';
+    const correct = !why;
+    // structure deductions (only when correct), calibrated on real children's handwriting
+    const notes = [];
+    let cut = 0;
+    if (correct) {
+      if (t.resid > 0.036) { cut += 15; notes.push('parts'); }
+      else if (t.resid > 0.03) { cut += 10; notes.push('parts'); }
+      else if (t.resid > 0.024) { cut += 5; notes.push('parts'); }
+      if (t.worst > 0.07) { cut += 10; notes.push('stroke'); }
+      else if (t.worst > 0.05) { cut += 5; notes.push('stroke'); }
+      if (t.lengthOff >= 5) { cut += 10; notes.push('length'); }
+      else if (t.lengthOff >= 3) { cut += 5; notes.push('length'); }
+      const asp = Math.log(t.sx / t.sy);   // > 0: the writing is narrower than it should be
+      if (Math.abs(asp) > Math.log(1.6)) { cut += 15; notes.push(asp > 0 ? 'thin' : 'flat'); }
+      else if (Math.abs(asp) > Math.log(1.35)) { cut += 10; notes.push(asp > 0 ? 'thin' : 'flat'); }
+      if (t.size < 0.4) { cut += 15; notes.push('small'); }
+      else if (t.size < 0.55) { cut += 10; notes.push('small'); }
+      if (t.off > 0.2) { cut += 10; notes.push('offcentre'); }
+      else if (t.off > 0.12) { cut += 5; notes.push('offcentre'); }
+      if (t.outside) { cut += 5; notes.push('outside'); }
+    }
+    const score = correct ? Math.max(60, 100 - cut) : 0;
+    return { correct, score, notes, why, looksLike: best && beaten ? best.ch : '', t, best: best ? { ch: best.ch, fit: best.r.fit } : null };
+  }
+  // Structure: how well the parts sit and how big/centred the character is (100, minus deductions).
+  function structureOf(t) {
+    const notes = [];
+    let cut = 0;
+    if (t.resid > 0.036) { cut += 15; notes.push('parts'); }
+    else if (t.resid > 0.03) { cut += 10; notes.push('parts'); }
+    else if (t.resid > 0.024) { cut += 5; notes.push('parts'); }
+    if (t.worst > 0.07) { cut += 10; notes.push('stroke'); }
+    else if (t.worst > 0.05) { cut += 5; notes.push('stroke'); }
+    if (t.lengthOff >= 5) { cut += 10; notes.push('length'); }
+    else if (t.lengthOff >= 3) { cut += 5; notes.push('length'); }
+    const asp = Math.log(t.sx / t.sy);   // > 0: the writing is narrower than it should be
+    if (Math.abs(asp) > Math.log(1.6)) { cut += 15; notes.push(asp > 0 ? 'thin' : 'flat'); }
+    else if (Math.abs(asp) > Math.log(1.35)) { cut += 10; notes.push(asp > 0 ? 'thin' : 'flat'); }
+    if (t.size < 0.4) { cut += 15; notes.push('small'); }
+    else if (t.size < 0.55) { cut += 10; notes.push('small'); }
+    if (t.off > 0.2) { cut += 10; notes.push('offcentre'); }
+    else if (t.off > 0.12) { cut += 5; notes.push('offcentre'); }
+    if (t.outside) { cut += 5; notes.push('outside'); }
+    return { score: Math.max(40, 100 - cut), notes };
+  }
+  function resampleK(p, K) {
+    const L = len(p);
+    if (p.length < 2 || L === 0) return Array.from({ length: K }, () => [p[0][0], p[0][1]]);
+    const out = [];
+    let j = 1, acc = 0;
+    for (let s = 0; s < K; s++) {
+      const t = (L * s) / (K - 1);
+      while (j < p.length - 1 && acc + d2(p[j], p[j - 1]) < t) { acc += d2(p[j], p[j - 1]); j++; }
+      const seg = d2(p[j], p[j - 1]) || 1;
+      const f = clamp((t - acc) / seg, 0, 1);
+      out.push([p[j - 1][0] + (p[j][0] - p[j - 1][0]) * f, p[j - 1][1] + (p[j][1] - p[j - 1][1]) * f]);
+    }
+    return out;
+  }
+  function ptSeg(p, a, b) {
+    const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+    const t = l2 ? clamp(((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2, 0, 1) : 0;
+    return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+  }
+  function meanDist(A, B) {
+    let s = 0;
+    for (const p of A) { let m = Infinity; for (let i = 1; i < B.length; i++) m = Math.min(m, ptSeg(p, B[i - 1], B[i])); s += m; }
+    return s / A.length;
+  }
+  // Stroke order: place the writing on the model character, pair each written stroke with a stroke of the
+  // character, then check the pairs come in the right sequence (longest in-order run) and run the right way.
+  function orderOf(templateStrokes, userStrokes, t) {
+    const K = 16, TH = 0.1;
+    const T = templateStrokes.map((s) => resampleK(s, K));
+    const tLen = templateStrokes.map(len);
+    const U = userStrokes.filter((s) => s.length && len(s) >= 0.008)
+      .map((s) => resampleK(s.map(([x, y]) => [t.sx * x + t.tx, t.sy * y + t.ty]), K));
+    const pairs = [];
+    U.forEach((u, j) => T.forEach((e, k) => {
+      const c = (meanDist(u, e) + meanDist(e, u)) / 2;
+      if (c < TH) pairs.push([c, j, k]);
+    }));
+    pairs.sort((a, b) => a[0] - b[0]);
+    const mu = new Array(U.length).fill(-1), me = new Array(T.length).fill(-1);
+    for (const [, j, k] of pairs) if (mu[j] < 0 && me[k] < 0) { mu[j] = k; me[k] = j; }
+    const seq = mu.filter((k) => k >= 0);
+    // longest increasing run of character-stroke numbers, in the order they were written
+    const n = seq.length, lis = new Array(n).fill(1), prev = new Array(n).fill(-1);
+    for (let i = 0; i < n; i++) for (let j = 0; j < i; j++) if (seq[j] < seq[i] && lis[j] + 1 > lis[i]) { lis[i] = lis[j] + 1; prev[i] = j; }
+    let best = -1; for (let i = 0; i < n; i++) if (best < 0 || lis[i] > lis[best]) best = i;
+    const inOrder = new Set();
+    for (let i = best; i >= 0; i = prev[i]) inOrder.add(seq[i]);
+    const outOfOrder = seq.filter((k) => !inOrder.has(k)).map((k) => k + 1).sort((a, b) => a - b);
+    const reversed = [];
+    mu.forEach((k, j) => {
+      if (k < 0 || tLen[k] < 0.05) return;   // dots are too short to judge direction
+      const u = U[j], e = T[k];
+      const same = d2(u[0], e[0]) + d2(u[K - 1], e[K - 1]);
+      const rev = d2(u[0], e[K - 1]) + d2(u[K - 1], e[0]);
+      if (rev < same * 0.7) reversed.push(k + 1);
+    });
+    reversed.sort((a, b) => a - b);
+    const judged = n >= Math.ceil(T.length * 0.5);
+    const score = judged ? Math.max(0, 100 - 15 * outOfOrder.length - 5 * reversed.length) : null;
+    return { score, judged, outOfOrder, reversed, matched: n, nStrokes: T.length };
+  }
+  // Dictation feedback without a right/wrong verdict (a parent decides that): stroke order and structure.
+  function assess(templateStrokes, userStrokes) {
+    const t = grade(templateStrokes, userStrokes);
+    if (t.empty) return { empty: true };
+    return { structure: structureOf(t), order: orderOf(templateStrokes, userStrokes, t), t };
+  }
+  return { grade, judge, assess, sample, len };
+})();
+</script>
+<script>
+(() => {
+  'use strict';
+
+  /* ---------- constants ---------- */
+  const KAI = '"LXGW WenKai TC", "Kaiti TC", "BiauKai", "DFKai-SB", "STKaiti", "KaiTi", serif';
+  const OCC_URL = 'https://cdn.jsdelivr.net/npm/opencc-js@1.4.2/dist/umd/full.js';
+  const PY_URL = 'https://cdn.jsdelivr.net/npm/pinyin-pro@3.29.4/dist/index.js';
+  const LS_KEY = 'mizige-practice-v1';
+  const LS_DICT = 'mizige-dictation-v1';
+  const SAMPLE = ['人', '大', '天', '日', '月', '山', '水', '火'];
+  const DICT_SAMPLE = [
+    { t: '學校', py: ['xué', 'xiào'] },
+    { t: '老師', py: ['lǎo', 'shī'] },
+    { t: '朋友', py: ['péng', 'you'] }
+  ];
+  const PAD = 0.045;      // grid inset, fraction of sheet
+  const GLYPH = 0.8;      // glyph size, fraction of grid
+  const MAX_CHARS = 80;
+  const MAX_DICT = 60;
+  const PENS = [
+    { id: 'black', name: '黑色', c: '#1d1d1f' },
+    { id: 'red', name: '紅色', c: '#e2382f' },
+    { id: 'orange', name: '橙色', c: '#f57c00' },
+    { id: 'yellow', name: '黃色', c: '#f0b400', light: true },
+    { id: 'green', name: '綠色', c: '#259b4a' },
+    { id: 'blue', name: '藍色', c: '#1f6fe5' },
+    { id: 'purple', name: '紫色', c: '#8a3ff0' },
+    { id: 'pink', name: '粉紅色', c: '#ef4f9b' },
+    { id: 'rainbow', name: '彩虹', c: 'rainbow' }
+  ];
+  const SIZES = [
+    { id: 's', name: '細', w: 0.026, d: 10 },
+    { id: 'm', name: '中', w: 0.04, d: 16 },
+    { id: 'l', name: '粗', w: 0.058, d: 23 }
+  ];
+  const GHOST = { dark: 0.3, light: 0.14, off: 0 };
+  const MAX_STARS = 5;
+  const STAMP = { 5: '優', 4: '好', 3: '棒', 2: '加油', 1: '加油' };
+  // Stroke-order data (Make Me a Hanzi), published next to this page as 128 shards keyed by code point.
+  const NSH = 128;
+  const EM_DATA = 0.88;   // the data's 1024-unit em box, as a fraction of the grid
+  const DEMO_INK = '#2a2523';
+  const BADGE = '#c6302a';
+  const UI_FONT = '"PingFang TC", "Heiti TC", "Noto Sans TC", system-ui, sans-serif';
+  const SPEEDS = { normal: { v: 0.95, gap: 260, lead: 350 }, slow: { v: 0.5, gap: 520, lead: 500 } };
+  const BOOL_KEYS = ['sound', 'autoDemo', 'speak'];
+  const LS_INK = 'mizige-practice-ink-v1';
+  const NOTE_TEXT = {
+    parts: '字的各部分位置或比例不太對',
+    stroke: '有一筆的位置不太對',
+    length: '有的筆畫太長或太短',
+    thin: '字寫得太瘦長了',
+    flat: '字寫得太扁了',
+    small: '字寫得太小了',
+    offcentre: '字沒有寫在格子中間',
+    outside: '字寫到格子外面了'
+  };
+
+  const ICON = {
+    star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.6l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17l-5.6 3 1.1-6.3L2.9 9.3l6.3-.9z"/></svg>',
+    left: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    right: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    cross: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+    undo: '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></g></svg>',
+    eraser: '<svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 19.5L3.9 14.9a1.6 1.6 0 0 1 0-2.3l8.7-8.7a1.6 1.6 0 0 1 2.3 0l5.2 5.2a1.6 1.6 0 0 1 0 2.3L12 19.5z"/><path d="M8.6 7.9l7.5 7.5"/><path d="M12 19.5h8"/></g></svg>',
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>',
+    skip: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5v13l9.5-6.5z" fill="currentColor"/><path d="M18 5.5v13" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
+    speaker: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    tickMark: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 52 L40 80 L90 16" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    crossMark: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 20 L80 80" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><path d="M80 20 L20 80" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/></svg>',
+    askMark: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 34 Q30 12 52 12 Q74 12 74 32 Q74 46 54 54 L52 66" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M52 86 L52 87" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round"/></svg>'
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    strip: $('strip'), stage: $('stage'), holder: $('holder'), page: $('page'), below: $('below'), hintLine: $('hintLine'),
+    demo: $('demo'), cap: $('cap'), demoBtn: $('demoBtn'),
+    prompt: $('prompt'), sayBtn: $('sayBtn'), reportBtn: $('reportBtn'),
+    result: $('result'), rStars: $('rStars'), rTitle: $('rTitle'), rScore: $('rScore'), rAnswer: $('rAnswer'), rSub: $('rSub'), rChecks: $('rChecks'),
+    againBtn: $('againBtn'), goNextBtn: $('goNextBtn'),
+    prevBtn: $('prevBtn'), nextBtn: $('nextBtn'), swatches: $('swatches'), sizes: $('sizes'),
+    undoBtn: $('undoBtn'), clearBtn: $('clearBtn'), doneBtn: $('doneBtn'),
+    progress: $('progress'), total: $('total'), sampleTag: $('sampleTag'), parentBtn: $('parentBtn'), rateBtn: $('rateBtn'),
+    rateBar: $('rateBar'), rateDone: $('rateDone'), rateText: $('rateText'), stdStatus: $('stdStatus'), charHint: $('charHint'),
+    tabPractice: $('tabPractice'), tabDict: $('tabDict'),
+    panel: $('panel'), panelLead: $('panelLead'), charInput: $('charInput'), convStatus: $('convStatus'), chips: $('chips'),
+    dictInput: $('dictInput'), dictStatus: $('dictStatus'), wlist: $('wlist'),
+    saveBtn: $('saveBtn'), closeBtn: $('closeBtn'), resetBtn: $('resetBtn'),
+    report: $('report'), rpSum: $('rpSum'), rpGrid: $('rpGrid'), rpAdd: $('rpAdd'), rpWrong: $('rpWrong'), rpAgain: $('rpAgain'), rpClose: $('rpClose'),
+    fx: $('fx'), toast: $('toast')
+  };
+  // One page shows four 米字格 cells; each has its own paper and ink canvases.
+  const PER_PAGE = 8;
+  const views = [];
+  for (let k = 0; k < PER_PAGE; k++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = '<div class="pylab" hidden></div><div class="sheet"><canvas class="bg" aria-hidden="true"></canvas><canvas class="ink" role="img"></canvas><div class="stamp" aria-hidden="true" hidden></div></div>' +
+      '<div class="rate" role="slider" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" aria-label="家長評分" hidden>' + ('<span class="st">' + ICON.star + '</span>').repeat(MAX_STARS) + '</div>' +
+      '<div class="judge" hidden></div>';
+    cell.dataset.k = String(k);
+    els.page.appendChild(cell);
+    const v = { k, cell, py: cell.querySelector('.pylab'), sheet: cell.querySelector('.sheet'), bg: cell.querySelector('.bg'), ink: cell.querySelector('.ink'), stamp: cell.querySelector('.stamp'), rate: cell.querySelector('.rate'), judge: cell.querySelector('.judge') };
+    v.bgCtx = v.bg.getContext('2d');
+    v.inkCtx = v.ink.getContext('2d');
+    views.push(v);
+  }
+  const demoCtx = els.demo.getContext('2d');
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* ---------- state ---------- */
+  const state = {
+    mode: 'practice',
+    chars: SAMPLE.slice(), isSample: true, idx: 0,
+    pen: 'black', size: 'm', ghost: 'dark', standard: 'hk', sound: true,   // standard: hk / tw traditional, or cn simplified
+    autoDemo: true, speed: 'normal', speak: true,
+    rate: {},      // practice: char -> stars a parent gave (0–5, kept on this device)
+    ink: {},       // practice: char -> { strokes, history }
+    dict: { words: DICT_SAMPLE.map((w) => ({ t: w.t, py: w.py.slice() })), idx: 0, res: {}, sample: true },
+    dictInk: {}    // dictation: cell index -> { strokes, history } while unanswered
+  };
+  let cells = [];   // dictation cells: { ch, py, w, k }
+  let sheetSize = 0, layoutKey = '';
+  let active = null;
+  let lastPenUp = 0;
+  let inkRect = null, liveCtx = null;
+
+  function loadSaved() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch (e) { d = null; }
+    if (!d || typeof d !== 'object') return false;
+    if (Array.isArray(d.chars)) {
+      const list = d.chars.filter((c) => typeof c === 'string' && c.length > 0).slice(0, MAX_CHARS);
+      if (list.length) { state.chars = list; state.isSample = !!d.isSample; }
+    }
+    if (d.mode === 'dict' || d.mode === 'practice') state.mode = d.mode;
+    if (PENS.some((p) => p.id === d.pen)) state.pen = d.pen;
+    if (SIZES.some((s) => s.id === d.size)) state.size = d.size;
+    if (Object.prototype.hasOwnProperty.call(GHOST, d.ghost)) state.ghost = d.ghost;
+    if (d.standard === 'tw' || d.standard === 'hk' || d.standard === 'cn') state.standard = d.standard;
+    for (const k of BOOL_KEYS) if (typeof d[k] === 'boolean') state[k] = d[k];
+    if (Object.prototype.hasOwnProperty.call(SPEEDS, d.speed)) state.speed = d.speed;
+    // Stars now come from a parent; earlier automatic scores (best5) are not carried over.
+    if (d.rate && typeof d.rate === 'object') state.rate = d.rate;
+    return true;
+  }
+  function save() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        mode: state.mode, chars: state.chars, isSample: state.isSample, pen: state.pen, size: state.size,
+        ghost: state.ghost, standard: state.standard, sound: state.sound, speak: state.speak,
+        autoDemo: state.autoDemo, speed: state.speed, rate: state.rate
+      }));
+    } catch (e) { /* storage unavailable: settings last for this visit only */ }
+  }
+  function loadDict() {
+    let d = null;
+    try { d = JSON.parse(localStorage.getItem(LS_DICT) || 'null'); } catch (e) { d = null; }
+    if (!d || !Array.isArray(d.words)) return;
+    const words = d.words.filter((w) => w && typeof w.t === 'string' && w.t && Array.isArray(w.py))
+      .map((w) => ({ t: w.t, py: Array.from(w.t, (_, i) => String(w.py[i] || '')) }));
+    if (!words.length) return;
+    state.dict = { words, idx: Number(d.idx) || 0, res: d.res && typeof d.res === 'object' ? d.res : {}, sample: !!d.sample };
+  }
+  function saveDict() {
+    try { localStorage.setItem(LS_DICT, JSON.stringify(state.dict)); } catch (e) { /* ignore */ }
+  }
+  function rebuildCells() {
+    cells = [];
+    state.dict.words.forEach((w, wi) => Array.from(w.t).forEach((ch, k) => cells.push({ ch, py: w.py[k] || '', w: wi, k })));
+    state.dict.idx = clamp(state.dict.idx, 0, Math.max(0, cells.length - 1));
+  }
+
+  const isDict = () => state.mode === 'dict';
+  const cur = () => state.chars[state.idx];
+  const curIdx = () => (isDict() ? state.dict.idx : state.idx);
+  const count = () => (isDict() ? cells.length : state.chars.length);
+  const target = () => (isDict() ? (cells[state.dict.idx] || {}).ch : cur());
+  const resOf = (i) => state.dict.res[i] || null;
+  function inkOf(ch) {
+    if (!state.ink[ch]) state.ink[ch] = { strokes: [], history: [] };
+    return state.ink[ch];
+  }
+  function curInk() {
+    if (!isDict()) return cur() ? inkOf(cur()) : { strokes: [], history: [] };
+    const i = state.dict.idx, r = resOf(i);
+    if (r) return { strokes: r.strokes || [], history: [] };
+    if (!state.dictInk[i]) state.dictInk[i] = { strokes: [], history: [] };
+    return state.dictInk[i];
+  }
+  const pageStart = () => Math.floor(curIdx() / PER_PAGE) * PER_PAGE;
+  const activeSlot = () => curIdx() - pageStart();
+  const activeView = () => views[activeSlot()];
+  const itemChar = (i) => (isDict() ? (cells[i] || {}).ch : state.chars[i]);
+  function inkFor(i) {
+    if (i === curIdx()) return curInk();
+    if (!isDict()) { const ch = state.chars[i]; return ch ? inkOf(ch) : { strokes: [], history: [] }; }
+    const r = resOf(i);
+    if (r) return { strokes: r.strokes || [], history: [] };
+    return state.dictInk[i] || { strokes: [], history: [] };
+  }
+  const penOf = () => PENS.find((p) => p.id === state.pen) || PENS[0];
+  const sizeOf = () => SIZES.find((s) => s.id === state.size) || SIZES[1];
+
+  /* ---------- fonts ---------- */
+  function ensureFont(text) {
+    try {
+      if (!document.fonts || !document.fonts.load) return Promise.resolve();
+      return document.fonts.load('400 40px "LXGW WenKai TC"', text + '國').then(() => {}, () => {});
+    } catch (e) { return Promise.resolve(); }
+  }
+
+  /* ---------- drawing: paper ---------- */
+  function token(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function drawGrid(c, S, color) {
+    const p = S * PAD, g = S - 2 * p, m = g / 2;
+    c.save();
+    c.strokeStyle = color;
+    c.lineCap = 'butt';
+    c.lineWidth = Math.max(1, g * 0.008);
+    c.setLineDash([g * 0.042, g * 0.03]);
+    c.beginPath();
+    c.moveTo(p + m, p); c.lineTo(p + m, p + g);
+    c.moveTo(p, p + m); c.lineTo(p + g, p + m);
+    c.moveTo(p, p); c.lineTo(p + g, p + g);
+    c.moveTo(p + g, p); c.lineTo(p, p + g);
+    c.stroke();
+    c.setLineDash([]);
+    c.lineWidth = Math.max(1.5, g * 0.017);
+    c.strokeRect(p, p, g, g);
+    c.restore();
+  }
+  // Centres the glyph by the em box, using 國 as the reference so every character keeps its natural position.
+  function drawGlyph(c, ch, S, color) {
+    const p = S * PAD, g = S - 2 * p, fs = g * GLYPH;
+    c.save();
+    c.font = '400 ' + fs + 'px ' + KAI;
+    const m = c.measureText('國');
+    const asc = m.actualBoundingBoxAscent, desc = m.actualBoundingBoxDescent;
+    const off = (isFinite(asc) && isFinite(desc) && asc + desc > 0) ? (asc - desc) / 2 : fs * 0.36;
+    c.fillStyle = color;
+    c.textAlign = 'center';
+    c.textBaseline = 'alphabetic';
+    c.fillText(ch, p + g / 2, p + g / 2 + off);
+    c.restore();
+  }
+
+  /* ---------- stroke-order data ---------- */
+  const shardCache = new Map();   // shard index -> Promise<object|null>
+  const strokeCache = new Map();  // char -> prepared data, or null when the data has no such char
+  const noData = new Set();       // chars drawn with the font because their data did not arrive
+  function loadShard(i) {
+    if (!shardCache.has(i)) {
+      const p = fetch('strokes/' + String(i).padStart(3, '0') + '.json')
+        .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .catch(() => { shardCache.delete(i); return null; });
+      shardCache.set(i, p);
+    }
+    return shardCache.get(i);
+  }
+  function prepStrokes(raw) {
+    try {
+      const paths = raw.s.map((p) => new Path2D(p));
+      const lens = raw.m.map((m) => {
+        let L = 0;
+        for (let i = 1; i < m.length; i++) L += Math.hypot(m[i][0] - m[i - 1][0], m[i][1] - m[i - 1][1]);
+        return Math.max(L, 1);
+      });
+      return { paths, meds: raw.m, lens, n: paths.length };
+    } catch (e) { return null; }
+  }
+  function getStrokes(ch) {
+    if (!ch) return Promise.resolve(null);
+    if (strokeCache.has(ch)) return Promise.resolve(strokeCache.get(ch));
+    return loadShard(ch.codePointAt(0) % NSH).then((sh) => {
+      if (!sh) { noData.add(ch); return null; }
+      const d = sh[ch] ? prepStrokes(sh[ch]) : null;
+      strokeCache.set(ch, d);
+      if (!d) noData.add(ch);
+      return d;
+    });
+  }
+  // Data coordinates: 1024-unit em box, y pointing up with the baseline offset at 900.
+  function emBox(S) {
+    const p = S * PAD, g = S - 2 * p, em = g * EM_DATA;
+    return { k: em / 1024, o: p + (g - em) / 2 };
+  }
+  function applyDataTransform(c, S) {
+    const b = emBox(S);
+    c.translate(b.o, b.o + 900 * b.k);
+    c.scale(b.k, -b.k);
+  }
+  function dataToSheet(S, x, y) {
+    const b = emBox(S);
+    return [b.o + x * b.k, b.o + (900 - y) * b.k];
+  }
+  // The shaded character: stroke data when available (so it matches the demo), otherwise the Kai font.
+  function drawShape(c, ch, S, color) {
+    const d = strokeCache.get(ch);
+    if (!d) { drawGlyph(c, ch, S, color); return; }
+    c.save();
+    applyDataTransform(c, S);
+    c.fillStyle = color;
+    for (const p of d.paths) c.fill(p);
+    c.restore();
+  }
+
+  function drawBg() {
+    const S = sheetSize; if (!S) return;
+    const paper = token('--paper', '#fffef9'), grid = token('--grid', '#d8352b');
+    const p0 = pageStart();
+    views.forEach((v, k) => {
+      const i = p0 + k, ch = itemChar(i), c = v.bgCtx;
+      c.clearRect(0, 0, S, S);
+      c.fillStyle = paper;
+      c.fillRect(0, 0, S, S);
+      drawGrid(c, S, grid);
+      if (!ch) return;
+      // Dictation never shows the character, except faintly under the demo of the correct answer.
+      const a = demo && i === curIdx() ? 0.09 : (isDict() ? 0 : GHOST[state.ghost]);
+      // Wait briefly for stroke data so the shadow doesn't switch shape right after it appears.
+      if (a > 0 && (strokeCache.has(ch) || noData.has(ch))) drawShape(c, ch, S, 'rgba(28, 28, 30, ' + a + ')');
+    });
+  }
+
+  /* ---------- stroke-order demo ---------- */
+  let demo = null, fadeT = 0, capT = 0;
+  function setCaption(text, ms) {
+    clearTimeout(capT);
+    if (!text) { els.cap.hidden = true; return; }
+    els.cap.textContent = text;
+    els.cap.hidden = false;
+    if (ms) capT = setTimeout(() => { els.cap.hidden = true; }, ms);
+  }
+  function tracePartial(c, med, tgt) {
+    c.beginPath();
+    c.moveTo(med[0][0], med[0][1]);
+    let acc = 0;
+    for (let i = 1; i < med.length; i++) {
+      const a = med[i - 1], b = med[i], seg = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (acc + seg >= tgt) {
+        const t = seg ? (tgt - acc) / seg : 0;
+        c.lineTo(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t);
+        return;
+      }
+      acc += seg;
+      c.lineTo(b[0], b[1]);
+    }
+  }
+  function playDemo() {
+    const ch = target(), d = strokeCache.get(ch);
+    if (!d) return;
+    stopDemo();
+    hideResult();
+    const sp = SPEEDS[state.speed] || SPEEDS.normal;
+    const starts = [], durs = [];
+    let t = sp.lead;
+    for (let i = 0; i < d.n; i++) {
+      const dur = Math.max(320, Math.min(1400, d.lens[i] / sp.v));
+      starts.push(t); durs.push(dur);
+      t += dur + sp.gap;
+    }
+    demo = { ch, d, starts, durs, end: t, t0: performance.now(), raf: 0, shown: -1 };
+    const v = activeView();
+    v.sheet.insertBefore(els.demo, v.ink);
+    els.demo.hidden = false;
+    els.demo.classList.remove('fade');
+    v.sheet.classList.add('demoing');
+    drawBg();
+    updateDemoBtn();
+    setCaption(isDict() ? '正確的寫法' : '看看怎麼寫');
+    demo.raf = requestAnimationFrame(demoFrame);
+  }
+  function demoFrame(now) {
+    if (!demo) return;
+    const el = now - demo.t0, d = demo.d, S = sheetSize, c = demoCtx;
+    c.clearRect(0, 0, S, S);
+    let curI = -1;
+    c.save();
+    applyDataTransform(c, S);
+    c.fillStyle = DEMO_INK;
+    c.strokeStyle = DEMO_INK;
+    for (let i = 0; i < d.n; i++) {
+      const pr = (el - demo.starts[i]) / demo.durs[i];
+      if (pr <= 0) break;
+      curI = i;
+      if (pr >= 1) { c.fill(d.paths[i]); continue; }
+      c.save();
+      c.clip(d.paths[i]);
+      c.lineWidth = 230; c.lineCap = 'round'; c.lineJoin = 'round';
+      tracePartial(c, d.meds[i], d.lens[i] * pr);
+      c.stroke();
+      c.restore();
+    }
+    c.restore();
+    if (curI >= 0) {
+      // numbered dot where the current stroke starts
+      const m = d.meds[curI][0];
+      const xy = dataToSheet(S, m[0], m[1]);
+      const r = Math.max(11, S * 0.027);
+      c.beginPath();
+      c.arc(xy[0], xy[1], r, 0, Math.PI * 2);
+      c.fillStyle = BADGE;
+      c.fill();
+      c.fillStyle = '#ffffff';
+      c.font = '700 ' + Math.round(r * 1.15) + 'px ' + UI_FONT;
+      c.textAlign = 'center';
+      c.textBaseline = 'middle';
+      c.fillText(String(curI + 1), xy[0], xy[1] + r * 0.06);
+      if (curI !== demo.shown) { demo.shown = curI; setCaption('第 ' + (curI + 1) + ' 筆，共 ' + d.n + ' 筆'); }
+    }
+    if (el >= demo.end + 200) { finishDemo(); return; }
+    demo.raf = requestAnimationFrame(demoFrame);
+  }
+  // Show the whole character in ink, then let it fade (into the gray shadow when tracing).
+  function finishDemo() {
+    if (!demo) return;
+    cancelAnimationFrame(demo.raf);
+    const d = demo.d, S = sheetSize, c = demoCtx;
+    c.clearRect(0, 0, S, S);
+    c.save();
+    applyDataTransform(c, S);
+    c.fillStyle = DEMO_INK;
+    for (const p of d.paths) c.fill(p);
+    c.restore();
+    demo = null;
+    views.forEach((v) => v.sheet.classList.remove('demoing'));
+    drawBg();
+    void els.demo.offsetWidth;
+    els.demo.classList.add('fade');
+    clearTimeout(fadeT);
+    fadeT = setTimeout(() => {
+      if (!demo) { demoCtx.clearRect(0, 0, sheetSize, sheetSize); els.demo.classList.remove('fade'); els.demo.hidden = true; }
+    }, 650);
+    updateDemoBtn();
+    if (isDict()) {
+      setCaption('記住這個字了嗎？', 1800);
+      const r = resOf(state.dict.idx);
+      if (r) setTimeout(() => { if (!demo && isDict() && resOf(state.dict.idx) === r) showDictResult(r, true); }, 700);
+    } else {
+      setCaption('換你寫了！', 1800);
+    }
+  }
+  function stopDemo() {
+    clearTimeout(fadeT);
+    const was = !!demo;
+    if (demo) cancelAnimationFrame(demo.raf);
+    demo = null;
+    if (sheetSize) demoCtx.clearRect(0, 0, sheetSize, sheetSize);
+    els.demo.classList.remove('fade');
+    els.demo.hidden = true;
+    views.forEach((v) => v.sheet.classList.remove('demoing'));
+    setCaption('');
+    if (was) drawBg();
+    updateDemoBtn();
+  }
+  function updateDemoBtn() {
+    els.demoBtn.hidden = isDict();
+    if (isDict()) return;
+    const ch = cur();
+    const d = ch ? strokeCache.get(ch) : null;
+    els.demoBtn.innerHTML = demo ? ICON.skip + '<span>略過</span>' : ICON.play + '<span>看示範</span>';
+    els.demoBtn.disabled = !demo && !d;
+    els.demoBtn.title = !demo && ch && strokeCache.has(ch) && !d ? '這個字沒有筆順資料' : '';
+  }
+  // Load this character's strokes, redraw, and play the demo if it's due. Also warms up the next character.
+  function prepareChar(auto) {
+    const ch = target(); if (!ch) return;
+    const dictMode = isDict();
+    updateDemoBtn();
+    const late = setTimeout(() => { if (ch === target() && !strokeCache.has(ch)) { noData.add(ch); drawBg(); } }, 3000);
+    getStrokes(ch).then((d) => {
+      clearTimeout(late);
+      if (ch !== target() || dictMode !== isDict()) return;
+      drawBg();
+      updateDemoBtn();
+      if (!dictMode && d && auto && state.autoDemo && !inkOf(ch).strokes.length && !active && !demo && els.panel.hidden) playDemo();
+    });
+    const p0 = pageStart();
+    for (let k = 0; k < PER_PAGE; k++) {
+      const c = itemChar(p0 + k);
+      if (c && c !== ch) getStrokes(c).then(() => { if (pageStart() === p0 && dictMode === isDict()) drawBg(); });
+    }
+    const nx = itemChar(p0 + PER_PAGE);
+    if (nx) getStrokes(nx);
+  }
+
+  /* ---------- drawing: ink ---------- */
+  // A point is [x, y, widthFactor, distanceFromStart], with x/y as fractions of the sheet.
+  function colorAt(st, i) {
+    if (st.c !== 'rainbow') return st.c;
+    const pt = st.pts[Math.min(i, st.pts.length - 1)];
+    const hue = Math.round((st.h0 + (pt[3] || 0) * 380) % 360);
+    return 'hsl(' + hue + ', 88%, 52%)';
+  }
+  function dot(c, st, S) {
+    const p = st.pts[0];
+    c.beginPath();
+    c.fillStyle = colorAt(st, 0);
+    c.arc(p[0] * S, p[1] * S, st.w * S * p[2] / 2, 0, Math.PI * 2);
+    c.fill();
+  }
+  function piece(c, st, i, S) {
+    const P = st.pts, a = P[i - 1], b = P[i];
+    let sx, sy;
+    if (i === 1) { sx = a[0]; sy = a[1]; } else { const z = P[i - 2]; sx = (z[0] + a[0]) / 2; sy = (z[1] + a[1]) / 2; }
+    const ex = (a[0] + b[0]) / 2, ey = (a[1] + b[1]) / 2;
+    c.beginPath();
+    c.moveTo(sx * S, sy * S);
+    c.quadraticCurveTo(a[0] * S, a[1] * S, ex * S, ey * S);
+    c.lineWidth = st.w * S * (a[2] + b[2]) / 2;
+    c.strokeStyle = colorAt(st, i);
+    c.stroke();
+  }
+  function tail(c, st, S) {
+    const P = st.pts, n = P.length; if (n < 2) return;
+    const a = P[n - 2], b = P[n - 1];
+    c.beginPath();
+    c.moveTo((a[0] + b[0]) / 2 * S, (a[1] + b[1]) / 2 * S);
+    c.lineTo(b[0] * S, b[1] * S);
+    c.lineWidth = st.w * S * b[2];
+    c.strokeStyle = colorAt(st, n - 1);
+    c.stroke();
+  }
+  function drawStroke(c, st, S, live) {
+    const n = st.pts.length; if (!n) return;
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    if (n === 1) { dot(c, st, S); return; }
+    for (let i = 1; i < n; i++) piece(c, st, i, S);
+    if (!live) tail(c, st, S);
+  }
+  function redrawInk() {
+    const S = sheetSize; if (!S) return;
+    const p0 = pageStart();
+    views.forEach((v, k) => {
+      const i = p0 + k, c = v.inkCtx;
+      c.clearRect(0, 0, S, S);
+      if (!itemChar(i)) return;
+      for (const st of inkFor(i).strokes) drawStroke(c, st, S, false);
+      if (active && i === curIdx()) drawStroke(c, active.stroke, S, true);
+    });
+  }
+
+  // Labels, highlight, pinyin and marks for the four cells on the current page.
+  function renderCells(animSlot) {
+    const p0 = pageStart(), n = count();
+    views.forEach((v, k) => {
+      const i = p0 + k, exists = i < n;
+      v.cell.classList.toggle('empty', !exists);
+      v.cell.classList.toggle('on', exists && i === curIdx());
+      v.py.hidden = !isDict();
+      if (isDict() && exists) {
+        const r = resOf(i);
+        v.py.textContent = cells[i].py || '?';
+        v.py.className = 'pylab' + (judgedOk(r) ? ' ok' : (judgedWrong(r) ? ' bad' : ''));
+      }
+      v.judge.hidden = !(isDict() && rating && exists);
+      if (!v.judge.hidden) {
+        const r = resOf(i);
+        if (!r) {
+          const has = state.dictInk[i] && state.dictInk[i].strokes.length;
+          v.judge.innerHTML = '<span class="jnone">' + (has ? '還沒按「寫好了」' : '還沒寫') + '</span>';
+        } else {
+          const okP = judgedOk(r), badP = judgedWrong(r);
+          v.judge.innerHTML = '<span class="jans" aria-hidden="true">' + esc(cells[i].ch) + '</span>' +
+            '<button type="button" class="jb ok" data-v="1" aria-pressed="' + okP + '" aria-label="第 ' + (i + 1) + ' 個字「' + esc(cells[i].ch) + '」寫對了">' + ICON.check + '</button>' +
+            '<button type="button" class="jb bad" data-v="0" aria-pressed="' + badP + '" aria-label="第 ' + (i + 1) + ' 個字「' + esc(cells[i].ch) + '」寫錯了">' + ICON.cross + '</button>';
+        }
+      }
+      v.ink.setAttribute('aria-label', !exists ? '' : (isDict() ? '第 ' + (i + 1) + ' 個字的寫字格，拼音 ' + (cells[i].py || '') : '描寫「' + state.chars[i] + '」'));
+      v.rate.hidden = isDict() || !exists;
+      if (!isDict() && exists) {
+        paintRate(v.rate, state.rate[state.chars[i]] || 0);
+        v.rate.classList.toggle('editing', rating);
+        v.rate.tabIndex = rating ? 0 : -1;
+        v.rate.setAttribute('aria-label', '「' + state.chars[i] + '」的家長評分');
+      }
+      const st = v.stamp;
+      let show = false;
+      st.className = 'stamp';
+      if (exists && isDict()) {
+        const r = resOf(i);
+        // a red tick or cross appears only once a parent has marked the character
+        if (judgedOk(r) || judgedWrong(r)) { st.classList.add('tick'); st.innerHTML = judgedOk(r) ? ICON.tickMark : ICON.crossMark; show = true; }
+      } else if (exists) {
+        const sc = state.rate[state.chars[i]] || 0;
+        if (sc > 0) { const w = STAMP[sc]; st.textContent = w; st.classList.toggle('two', w.length > 1); show = true; }
+      }
+      st.hidden = !show;
+      if (show && k === animSlot) { restart(st, 'in'); restart(v.sheet, 'thud'); }
+    });
+  }
+
+  /* ---------- layout ---------- */
+  function layout() {
+    const W = els.holder.clientWidth, H = els.holder.clientHeight;
+    const cols = W < 600 ? 2 : 4, rows = PER_PAGE / cols, gap = W < 600 ? 10 : 16;
+    // pinyin above (plus the parent's ✓/✗ row while marking), or the parent's stars below
+    const pyH = isDict() ? 38 + (rating ? 52 : 0) : 36, promptH = isDict() ? 66 : 0;
+    const below = isDict() ? (rating ? 110 : Math.round(Math.min(250, Math.max(150, H * 0.3)))) : 96;
+    const fitW = (W - (cols - 1) * gap - 8) / cols;
+    const fitH = (H - promptH - below - 14 - rows * pyH - (rows - 1) * gap - 8) / rows;
+    // on a phone the eight cells cannot all fit: keep them writable (120px) and let the area scroll
+    const S = Math.max(60, Math.floor(Math.max(Math.min(fitW, 120), Math.min(fitW, fitH, 230))));
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    const px = Math.round(S * dpr);
+    const key = [S, px, cols, pyH, below].join('|');
+    if (key === layoutKey) return;
+    layoutKey = key;
+    sheetSize = S;
+    els.holder.style.setProperty('--s', S + 'px');
+    els.holder.style.setProperty('--below', below + 'px');
+    els.page.style.setProperty('--cols', cols);
+    els.page.style.setProperty('--gap', gap + 'px');
+    for (const v of views) {
+      for (const cv of [v.bg, v.ink]) { cv.width = px; cv.height = px; }
+      v.bgCtx.setTransform(px / S, 0, 0, px / S, 0, 0);
+      v.inkCtx.setTransform(px / S, 0, 0, px / S, 0, 0);
+    }
+    els.demo.width = els.demo.height = px;
+    demoCtx.setTransform(px / S, 0, 0, px / S, 0, 0);
+    drawBg();
+    redrawInk();
+  }
+
+  /* ---------- pointer input (finger, Apple Pencil, mouse) ---------- */
+  function toPt(e) {
+    const x = (e.clientX - inkRect.left) / inkRect.width;
+    const y = (e.clientY - inkRect.top) / inkRect.height;
+    let f = 1;
+    if (e.pointerType === 'pen') {
+      const pr = e.pressure > 0 ? e.pressure : 0.5;
+      f = 0.55 + 0.9 * pr;
+    }
+    return [x, y, f];
+  }
+  let lockToastAt = 0;
+  function onDown(e, v) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (rating) return;
+    const i = pageStart() + v.k;
+    if (i >= count()) return;
+    if (active) {
+      // Pencil wins over a resting palm: drop the touch stroke and start with the pen.
+      if (e.pointerType === 'pen' && active.type !== 'pen') { active = null; redrawInk(); }
+      else return;
+    }
+    if (e.pointerType === 'touch' && performance.now() - lastPenUp < 600) return;
+    e.preventDefault();
+    if (i !== curIdx()) goTo(i, true);   // writing in another cell makes it the current one
+    if (isDict() && resOf(i)) {
+      if (performance.now() - lockToastAt > 2500) { lockToastAt = performance.now(); toast('這個字已經交了，按「下一個」繼續'); }
+      return;
+    }
+    if (demo) stopDemo();   // touching the paper ends the demo and starts writing
+    hideResult();
+    keepAwake();
+    inkRect = v.ink.getBoundingClientRect();
+    liveCtx = v.inkCtx;
+    try { v.ink.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    const st = { c: penOf().c, w: sizeOf().w, h0: Math.floor(Math.random() * 360), pts: [] };
+    const p = toPt(e); p.push(0);
+    st.pts.push(p);
+    active = { id: e.pointerId, type: e.pointerType, stroke: st };
+    liveCtx.lineCap = 'round'; liveCtx.lineJoin = 'round';
+    dot(liveCtx, st, sheetSize);
+  }
+  function onMove(e) {
+    if (!active || e.pointerId !== active.id) return;
+    e.preventDefault();
+    const co = typeof e.getCoalescedEvents === 'function' ? e.getCoalescedEvents() : null;
+    const list = co && co.length ? co : [e];
+    const st = active.stroke, P = st.pts;
+    liveCtx.lineCap = 'round'; liveCtx.lineJoin = 'round';
+    for (const ev of list) {
+      const q = toPt(ev);
+      const last = P[P.length - 1];
+      const d = Math.hypot(q[0] - last[0], q[1] - last[1]);
+      if (d < 0.003) continue;
+      q[2] = last[2] * 0.6 + q[2] * 0.4;
+      q.push(last[3] + d);
+      P.push(q);
+      piece(liveCtx, st, P.length - 1, sheetSize);
+    }
+  }
+  function endStroke(e, cancelled) {
+    if (!active || e.pointerId !== active.id) return;
+    const st = active.stroke, type = active.type;
+    active = null;
+    if (type === 'pen') lastPenUp = performance.now();
+    if (cancelled && type === 'touch') { redrawInk(); return; }
+    liveCtx.lineCap = 'round'; liveCtx.lineJoin = 'round';
+    tail(liveCtx, st, sheetSize);
+    const ink = curInk();
+    ink.strokes.push(st);
+    ink.history.push({ t: 'add' });
+    if (!isDict()) saveInk();
+    updateButtons();
+  }
+  for (const v of views) {
+    v.ink.addEventListener('pointerdown', (e) => onDown(e, v));
+    v.ink.addEventListener('pointermove', onMove);
+    v.ink.addEventListener('pointerup', (e) => endStroke(e, false));
+    v.ink.addEventListener('pointercancel', (e) => endStroke(e, true));
+    // Stop iPad text selection, magnifier and scrolling while writing.
+    ['touchstart', 'touchmove'].forEach((t) => v.ink.addEventListener(t, (e) => e.preventDefault(), { passive: false }));
+    v.ink.addEventListener('contextmenu', (e) => e.preventDefault());
+    v.rate.addEventListener('pointerdown', (e) => onRateDown(e, v));
+    v.rate.addEventListener('pointermove', onRateMove);
+    v.rate.addEventListener('pointerup', onRateUp);
+    v.rate.addEventListener('pointercancel', onRateUp);
+    v.rate.addEventListener('keydown', (e) => onRateKey(e, v));
+    ['touchstart', 'touchmove'].forEach((t) => v.rate.addEventListener(t, (e) => { if (rating) e.preventDefault(); }, { passive: false }));
+  }
+
+  let wake = null;
+  async function keepAwake() {
+    if (wake || !('wakeLock' in navigator)) return;
+    try {
+      wake = await navigator.wakeLock.request('screen');
+      wake.addEventListener('release', () => { wake = null; });
+    } catch (e) { wake = null; }
+  }
+
+  /* ---------- edit actions ---------- */
+  const locked = () => isDict() && !!resOf(state.dict.idx);
+  function undo() {
+    if (locked()) return;
+    const ink = curInk();
+    const h = ink.history.pop(); if (!h) return;
+    if (h.t === 'add') ink.strokes.pop();
+    else if (h.t === 'clear') ink.strokes = h.prev;
+    if (!isDict()) saveInk();
+    hideResult(); redrawInk(); updateButtons();
+  }
+  function clearInk() {
+    if (locked()) return;
+    const ink = curInk();
+    if (!ink.strokes.length) return;
+    ink.history.push({ t: 'clear', prev: ink.strokes });
+    ink.strokes = [];
+    if (!isDict()) saveInk();
+    hideResult(); redrawInk(); updateButtons();
+  }
+
+  /* ---------- practice: the child finishes a character, a parent awards 0–5 stars ---------- */
+  function done() {
+    if (rating) return;
+    if (isDict()) { submitDict(); return; }
+    const ch = cur(); if (!ch) return;
+    if (demo) stopDemo();
+    if (!inkOf(ch).strokes.length) { toast('先沿著灰色的字描一描，再按「寫好了」'); return; }
+    chime(2);
+    if (state.idx < state.chars.length - 1) {
+      goTo(state.idx + 1);
+      setCaption('寫好了！下一個字', 1400);
+    } else {
+      setCaption('全部寫完了！', 3000);
+      toast('全部寫完了！請爸爸媽媽按住「家長評分」來給星星。', 4200);
+    }
+  }
+  function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function resetCard() {
+    els.rStars.hidden = false;
+    els.rScore.hidden = true;
+    els.rAnswer.hidden = true;
+    els.againBtn.hidden = false;
+    els.hintLine.hidden = true;
+  }
+  function hideResult() {
+    els.result.hidden = true;
+    els.hintLine.hidden = rating;
+  }
+
+  // traced strokes stay on this device, so a parent can rate them later
+  let inkSaveT = 0;
+  function saveInk() {
+    clearTimeout(inkSaveT);
+    inkSaveT = setTimeout(() => {
+      try {
+        const o = {};
+        for (const ch of state.chars) { const k = state.ink[ch]; if (k && k.strokes.length) o[ch] = k.strokes.map(compact); }
+        localStorage.setItem(LS_INK, JSON.stringify(o));
+      } catch (e) { /* storage full or unavailable */ }
+    }, 400);
+  }
+  function loadInk() {
+    try {
+      const o = JSON.parse(localStorage.getItem(LS_INK) || 'null');
+      if (o && typeof o === 'object') for (const ch in o) if (Array.isArray(o[ch])) state.ink[ch] = { strokes: o[ch], history: [] };
+    } catch (e) { /* ignore */ }
+  }
+
+  /* parent rating: hold 「家長評分」, then drag across the five stars under each character.
+     In dictation the same button is 「家長批改」: each written character gets a ✓ / ✗ from the parent. */
+  let rating = false, rateDrag = null;
+  const rateLabel = () => (isDict() ? '家長批改' : '家長評分');
+  function paintRateBtn() {
+    els.rateBtn.querySelector('b').textContent = rating ? (isDict() ? '批改中' : '評分中') : rateLabel();
+    els.rateBtn.querySelector('small').textContent = rating ? '按住結束' : '按住 1 秒';
+    els.rateBtn.setAttribute('aria-label', rating ? rateLabel() + '中，按住一秒結束' : rateLabel() + '，按住一秒開始');
+  }
+  function setRating(on) {
+    if (on === rating) return;
+    rating = on;
+    active = null;
+    stopDemo();
+    hideResult();
+    els.rateBar.hidden = !on;
+    els.hintLine.hidden = on;
+    document.body.classList.toggle('rating', on);
+    els.rateText.innerHTML = isDict()
+      ? '<b>家長批改：</b>每個寫好的字下面有正確答案，點 ✓ 或 ✗。點錯了再點一次就能取消。'
+      : '<b>家長評分：</b>在每個字下面左右拖動星星，最多 5 顆，拖到最左邊是 0 顆。';
+    els.rateDone.textContent = isDict() ? '完成批改' : '完成評分';
+    paintRateBtn();
+    renderCells(-1);
+    if (isDict()) {
+      layout();
+      if (!els.report.hidden) openReport();
+    }
+    if (!on) {
+      if (isDict()) { saveDict(); toast('批改完成'); const r = resOf(state.dict.idx); if (r) showDictResult(r, true); }
+      else { save(); toast('評分完成'); }
+    }
+  }
+  function paintRate(el, n) {
+    el.querySelectorAll('.st').forEach((s0, k) => s0.classList.toggle('on', k < n));
+    el.setAttribute('aria-valuenow', String(n));
+  }
+  function rateValue(el, clientX) {
+    const r = el.getBoundingClientRect();
+    const w = r.width / MAX_STARS, x = clientX - r.left;
+    if (x < w * 0.3) return 0;   // the far left means no stars
+    return clamp(Math.ceil(x / w), 0, MAX_STARS);
+  }
+  function commitRate(v, ch, n) {
+    if (n > 0) state.rate[ch] = n; else delete state.rate[ch];
+    save();
+    renderCells(n > 0 ? v.k : -1);
+    renderStrip(); renderHeader();
+    if (n > 0) chime(n);
+    if (n === MAX_STARS) setTimeout(() => confetti(v.sheet), 220);
+  }
+  function onRateDown(e, v) {
+    if (!rating || isDict()) return;
+    const ch = state.chars[pageStart() + v.k]; if (!ch) return;
+    e.preventDefault();
+    try { v.rate.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    rateDrag = { id: e.pointerId, v, ch, n: rateValue(v.rate, e.clientX) };
+    paintRate(v.rate, rateDrag.n);
+  }
+  function onRateMove(e) {
+    if (!rateDrag || e.pointerId !== rateDrag.id) return;
+    e.preventDefault();
+    const n = rateValue(rateDrag.v.rate, e.clientX);
+    if (n !== rateDrag.n) { rateDrag.n = n; paintRate(rateDrag.v.rate, n); }
+  }
+  function onRateUp(e) {
+    if (!rateDrag || e.pointerId !== rateDrag.id) return;
+    const d = rateDrag; rateDrag = null;
+    commitRate(d.v, d.ch, d.n);
+  }
+  function onRateKey(e, v) {
+    if (!rating || isDict()) return;
+    const ch = state.chars[pageStart() + v.k]; if (!ch) return;
+    const n0 = state.rate[ch] || 0;
+    let n = n0;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') n = Math.min(MAX_STARS, n0 + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') n = Math.max(0, n0 - 1);
+    else if (/^[0-5]$/.test(e.key)) n = Number(e.key);
+    else return;
+    e.preventDefault(); e.stopPropagation();
+    commitRate(v, ch, n);
+  }
+
+  /* ---------- dictation ---------- */
+  const r3 = (v) => Math.round(v * 1000) / 1000;
+  const compact = (st) => ({ c: st.c, w: st.w, h0: st.h0, pts: st.pts.map((p) => [r3(p[0]), r3(p[1]), Math.round(p[2] * 100) / 100, r3(p[3] || 0)]) });
+
+  /* AI feedback for dictation: stroke order and structure, measured against the character's model strokes.
+     Whether the character is right is the parent's call (ok stays null until a parent marks it). */
+  const GRADER_VERSION = 3;
+  function judgedOk(r) { return !!(r && r.byParent && r.ok === true); }
+  function judgedWrong(r) { return !!(r && r.byParent && r.ok === false); }
+  function orderScore(r) { return r && r.order && r.order.judged ? r.order.score : null; }
+  function structScore(r) { return r && r.structure ? r.structure.score : null; }
+  // null when nothing usable was written
+  function assessCell(ch, strokes) {
+    const U = strokes.map((st) => st.pts.map((p) => [p[0], p[1]])).filter((s) => s.length);
+    if (!U.length) return null;
+    const d = strokeCache.get(ch);
+    if (!d) return { ok: null, gv: GRADER_VERSION, order: null, structure: null };
+    const T = d.meds.map((m) => m.map((q) => dataToSheet(1, q[0], q[1])));
+    const a = GRADE.assess(T, U);
+    if (a.empty) return null;
+    const o = a.order;
+    els.result.dataset.assess = JSON.stringify({ order: o, structure: a.structure, resid: +a.t.resid.toFixed(3) });
+    return {
+      ok: null, gv: GRADER_VERSION,
+      order: { score: o.score, judged: o.judged, outOfOrder: o.outOfOrder, reversed: o.reversed },
+      structure: { score: a.structure.score, notes: a.structure.notes }
+    };
+  }
+  // Answers saved by an earlier version (which judged right/wrong by itself) get stroke-order and structure
+  // scores instead; their verdict goes back to "waiting for a parent" unless a parent had marked them.
+  let regrading = false;
+  async function regradeOld() {
+    if (regrading) return;
+    regrading = true;
+    let changed = false;
+    for (let i = 0; i < cells.length; i++) {
+      const r = resOf(i);
+      if (!r || r.gv === GRADER_VERSION) continue;
+      await getStrokes(cells[i].ch);
+      const r2 = resOf(i);
+      if (r2 !== r) continue;   // the list changed while waiting
+      const nr = (r.strokes && r.strokes.length && assessCell(cells[i].ch, r.strokes)) || { ok: null, gv: GRADER_VERSION, order: null, structure: null };
+      nr.strokes = r.strokes || [];
+      if (r.byParent) { nr.ok = r.ok; nr.byParent = true; }
+      state.dict.res[i] = nr;
+      changed = true;
+      await new Promise((res) => setTimeout(res, 0));
+    }
+    regrading = false;
+    if (changed && isDict()) {
+      saveDict();
+      renderCells(-1); renderStrip(); renderHeader(); renderPrompt();
+      if (!els.report.hidden) openReport();
+      const r = resOf(state.dict.idx);
+      if (r && !els.result.hidden) showDictResult(r, true);
+    }
+  }
+  function warmDict() { regradeOld(); }
+  // A parent marks a written character right or wrong; tapping the same choice again clears it.
+  function parentJudge(i, ok) {
+    const r = resOf(i); if (!r) return;
+    if (r.byParent && r.ok === ok) { r.ok = null; delete r.byParent; }
+    else { r.ok = ok; r.byParent = true; }
+    saveDict();
+    const k = i - pageStart();
+    renderCells(r.byParent && k >= 0 && k < PER_PAGE ? k : -1);
+    renderStrip(); renderHeader();
+    if (r.byParent) chime(ok ? 3 : 0);
+    if (!els.report.hidden) openReport();
+  }
+  els.page.addEventListener('click', (e) => {
+    const b = e.target.closest('.jb'); if (!b || !rating || !isDict()) return;
+    const cell = b.closest('.cell'); if (!cell) return;
+    parentJudge(pageStart() + Number(cell.dataset.k), b.dataset.v === '1');
+  });
+
+  let submitting = false;
+  async function submitDict() {
+    const i = state.dict.idx, cell = cells[i];
+    if (!cell || submitting) return;
+    const done0 = resOf(i);
+    if (done0) { showDictResult(done0, true); return; }
+    const ink = curInk();
+    if (!ink.strokes.length) { toast('先把字寫在米字格裡，再按「寫好了」'); return; }
+    submitting = true;
+    els.doneBtn.disabled = true;
+    els.doneBtn.innerHTML = ICON.check + '<span>批改中…</span>';
+    await getStrokes(cell.ch);
+    await new Promise((res) => requestAnimationFrame(() => setTimeout(res, 0)));   // let the label paint first
+    const r = (isDict() && state.dict.idx === i && !resOf(i)) ? assessCell(cell.ch, ink.strokes) : undefined;
+    submitting = false;
+    els.doneBtn.disabled = false;
+    els.doneBtn.innerHTML = ICON.check + '<span>寫好了</span>';
+    if (r === undefined) return;
+    if (r === null) { toast('先把字寫在米字格裡，再按「寫好了」'); return; }
+    r.strokes = ink.strokes.map(compact);
+    state.dict.res[i] = r;
+    delete state.dictInk[i];
+    saveDict();
+    showDictResult(r, false);
+    renderStrip(); renderHeader(); renderPrompt(); updateButtons();
+  }
+  function nextOpenCell(from) {
+    const n = cells.length;
+    for (let s = 1; s <= n; s++) { const j = (from + s) % n; if (!resOf(j)) return j; }
+    return -1;
+  }
+  function orderTip(r) {
+    const o = r.order;
+    if (!o) return '這個字沒有筆順資料。';
+    if (!o.judged) return '看不出筆順，請爸爸媽媽看看這個字。';
+    const parts = [];
+    const which = (a) => (a.length <= 3 ? '第 ' + a.join('、') + ' 筆' : '有 ' + a.length + ' 筆');
+    if (o.outOfOrder.length) parts.push(which(o.outOfOrder) + '的順序不對');
+    if (o.reversed.length) parts.push(which(o.reversed) + '的方向寫反了');
+    return parts.length ? parts.join('，') + '。' : '筆順都對了！';
+  }
+  const scoreBox = (v, label) => '<span class="sc"><b class="' + (v == null ? '' : v >= 85 ? 'hi' : v < 70 ? 'lo' : '') + '">' + (v == null ? '—' : v) + '</b><small>' + label + '</small></span>';
+  function showDictResult(r, quiet) {
+    resetCard();
+    els.rStars.hidden = true;
+    renderCells(quiet ? -1 : activeSlot());
+    const cell = cells[state.dict.idx];
+    const os = orderScore(r), ss = structScore(r);
+    els.rTitle.innerHTML = esc(judgedOk(r) ? '答對了！' : (judgedWrong(r) ? '寫錯了' : '寫好了！')) + (r.byParent ? '' : '<span class="r-wait">對不對，等爸爸媽媽批改</span>');
+    els.rScore.innerHTML = scoreBox(os, '筆順') + scoreBox(ss, '結構');
+    els.rScore.hidden = false;
+    els.rSub.textContent = orderTip(r);
+    const notes = r.structure ? r.structure.notes : [];
+    els.rChecks.innerHTML = (r.structure && !notes.length ? '<span class="ck ok">結構很好</span>' : notes.map((n) => '<span class="ck bad">' + esc(NOTE_TEXT[n] || n) + '</span>').join(''));
+    if (judgedWrong(r)) {
+      els.rAnswer.innerHTML = '<span>正確的字</span><span class="ans">' + esc(cell.ch) + '</span>';
+      els.rAnswer.hidden = false;
+    }
+    els.againBtn.hidden = !strokeCache.get(cell.ch);
+    els.againBtn.textContent = '看正確寫法';
+    const nxt = nextOpenCell(state.dict.idx);
+    els.goNextBtn.textContent = nxt < 0 ? '看成績單' : (nxt > state.dict.idx ? '下一個' : '去還沒寫的字');
+    els.result.hidden = false;
+    if (!quiet) {
+      restart(els.result, 'in');
+      chime(os != null && ss != null ? (os + ss >= 190 ? 4 : 3) : 2);
+    }
+  }
+  function goNextDict() {
+    const nxt = nextOpenCell(state.dict.idx);
+    if (nxt < 0) { openReport(); return; }
+    goTo(nxt);
+  }
+  function renderPrompt() {
+    els.stage.classList.toggle('dict', isDict());
+    els.prompt.hidden = !isDict();
+    els.hintLine.textContent = isDict()
+      ? '看格子上面的拼音寫字，寫完一個字按「寫好了」。電腦會看筆順和結構，對不對由爸爸媽媽批改。'
+      : '點一個格子，沿著灰色的字描，描完按「寫好了」。星星由爸爸媽媽來評。';
+    if (!isDict()) return;
+    els.sayBtn.hidden = !(state.speak && zhVoice);
+  }
+
+  /* read the word aloud (speech synthesis, when a Chinese voice exists) */
+  let zhVoice = null;
+  function pickVoice() {
+    try {
+      if (!('speechSynthesis' in window)) return;
+      const vs = window.speechSynthesis.getVoices() || [];
+      const by = (re) => vs.find((v) => re.test(v.lang));
+      const cn = /zh[-_](CN|Hans)/i, tw = /zh[-_](TW|Hant)/i;
+      zhVoice = (state.standard === 'cn' ? by(cn) || by(tw) : by(tw) || by(cn)) || by(/^(zh|cmn)/i) || null;
+    } catch (e) { zhVoice = null; }
+    if (isDict()) renderPrompt();
+  }
+  function say() {
+    const cell = cells[state.dict.idx];
+    if (!cell || !zhVoice) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(state.dict.words[cell.w].t);
+      u.voice = zhVoice; u.lang = zhVoice.lang; u.rate = 0.8;
+      window.speechSynthesis.speak(u);
+    } catch (e) { /* no speech */ }
+  }
+
+  /* report */
+  function drawThumb(cv, strokes) {
+    const css = 76, dpr = Math.min(window.devicePixelRatio || 1, 2), px = Math.round(css * dpr);
+    cv.width = cv.height = px;
+    const c = cv.getContext('2d');
+    c.setTransform(px / css, 0, 0, px / css, 0, 0);
+    c.fillStyle = token('--paper', '#fffef9');
+    c.fillRect(0, 0, css, css);
+    drawGrid(c, css, token('--grid', '#d8352b'));
+    for (const st of strokes || []) drawStroke(c, st, css, false);
+  }
+  function openReport() {
+    stopDemo();
+    const n = cells.length;
+    const vals = cells.map((_, i) => resOf(i));
+    const right = vals.filter(judgedOk).length;
+    const wrong = vals.filter(judgedWrong).length;
+    const written = vals.filter(Boolean).length;
+    const waiting = written - right - wrong;
+    const avg = (xs) => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null);
+    const avgO = avg(vals.map(orderScore).filter((v) => v != null));
+    const avgS = avg(vals.map(structScore).filter((v) => v != null));
+    els.rpSum.innerHTML =
+      '<div class="rp-big right"><b>' + right + '</b><small>/ ' + n + ' 答對（家長批改）</small></div>' +
+      (waiting ? '<div class="rp-big"><b>' + waiting + '</b><small>待批改</small></div>' : '') +
+      (avgO != null ? '<div class="rp-big"><b>' + avgO + '</b><small>筆順平均</small></div>' : '') +
+      (avgS != null ? '<div class="rp-big"><b>' + avgS + '</b><small>結構平均</small></div>' : '') +
+      (written < n ? '<div class="rp-big"><small>還有 ' + (n - written) + ' 個字沒寫</small></div>' : '') +
+      (waiting && !rating ? '<div class="rp-note">對錯由家長批改：關閉成績單，按住右上角「家長批改」1 秒。</div>' : '') +
+      (rating ? '<div class="rp-note">在每個字下面點 ✓ 或 ✗，再點一次可以取消。</div>' : '');
+    els.rpGrid.innerHTML = cells.map((cell, i) => {
+      const r = vals[i];
+      const mark = !r ? '' : (judgedOk(r) ? '<span class="rp-mark ok">✓</span>' : (judgedWrong(r) ? '<span class="rp-mark bad">✗</span>' : '<span class="rp-mark q" title="待批改">?</span>'));
+      // the answer is shown only after the child has written that character
+      const ans = r ? '<span class="rp-ans">' + esc(cell.ch) + '</span>' : '';
+      const os = orderScore(r), ss = structScore(r);
+      const score = '<span class="rp-score">' + (r ? '<span>筆順 ' + (os == null ? '—' : os) + '</span> · <span>結構 ' + (ss == null ? '—' : ss) + '</span>' : '還沒寫') + '</span>';
+      const judge = r && rating
+        ? '<div class="rp-judge"><button type="button" class="jb ok" data-judge="1" data-i="' + i + '" aria-pressed="' + judgedOk(r) + '" aria-label="「' + esc(cell.ch) + '」寫對了">' + ICON.check + '</button>' +
+          '<button type="button" class="jb bad" data-judge="0" data-i="' + i + '" aria-pressed="' + judgedWrong(r) + '" aria-label="「' + esc(cell.ch) + '」寫錯了">' + ICON.cross + '</button></div>'
+        : '';
+      return '<div class="rp-item"><canvas data-i="' + i + '" aria-hidden="true"></canvas><div class="rp-line">' + ans + '<span class="rp-py">' + esc(cell.py) + '</span>' + mark + '</div>' + score + judge + '</div>';
+    }).join('');
+    els.rpGrid.querySelectorAll('canvas').forEach((cv) => { const r = vals[Number(cv.dataset.i)]; drawThumb(cv, r ? r.strokes : []); });
+    els.rpAdd.hidden = els.rpWrong.hidden = !wrong;
+    els.report.hidden = false;
+  }
+  function closeReport() { els.report.hidden = true; }
+  els.rpGrid.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-judge]'); if (!b || !rating) return;
+    parentJudge(Number(b.dataset.i), b.dataset.judge === '1');
+  });
+  els.rpClose.addEventListener('click', closeReport);
+  els.report.addEventListener('click', (e) => { if (e.target === els.report) closeReport(); });
+  els.rpAgain.addEventListener('click', () => {
+    state.dict.res = {}; state.dictInk = {}; state.dict.idx = 0;
+    saveDict(); closeReport(); goTo(0);
+  });
+  els.rpWrong.addEventListener('click', () => {
+    const wrong = cells.filter((_, i) => judgedWrong(resOf(i)));
+    if (!wrong.length) return;
+    state.dict = { words: wrong.map((c) => ({ t: c.ch, py: [c.py] })), idx: 0, res: {}, sample: false };
+    state.dictInk = {};
+    rebuildCells(); saveDict(); closeReport(); goTo(0);
+  });
+  els.rpAdd.addEventListener('click', () => {
+    const wrong = [];
+    cells.forEach((c, i) => { if (judgedWrong(resOf(i)) && !wrong.includes(c.ch)) wrong.push(c.ch); });
+    if (!wrong.length) return;
+    if (state.isSample) { state.chars = []; state.isSample = false; }
+    let added = 0;
+    for (const ch of wrong) if (!state.chars.includes(ch) && state.chars.length < MAX_CHARS) { state.chars.push(ch); added++; }
+    save();
+    toast(added ? '已把 ' + added + ' 個錯字加到描紅練習，點上面的「描紅」就能練。' : '這些字已經在描紅練習裡了。', 3600);
+  });
+
+  /* ---------- sound + confetti ---------- */
+  let actx = null;
+  function chime(stars) {
+    if (!state.sound) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      actx = actx || new AC();
+      if (actx.state === 'suspended') actx.resume();
+      const notes = stars > 0 ? [523.25, 587.33, 659.25, 783.99, 880, 1046.5].slice(0, stars + 1) : [392, 329.63];
+      notes.forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain();
+        const t = actx.currentTime + 0.05 + i * 0.13;
+        o.type = 'triangle'; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        o.connect(g); g.connect(actx.destination);
+        o.start(t); o.stop(t + 0.5);
+      });
+    } catch (e) { /* no audio */ }
+  }
+  let fxRaf = 0;
+  function confetti(fromEl) {
+    if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = els.fx, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = window.innerWidth, H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const c = cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const r = (fromEl || activeView().sheet).getBoundingClientRect();
+    const ox = r.left + r.width / 2, oy = r.top + r.height * 0.35;
+    const cols = PENS.filter((p) => p.c !== 'rainbow').map((p) => p.c);
+    const parts = Array.from({ length: 90 }, () => {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.1;
+      const v = 6 + Math.random() * 9;
+      return { x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, s: 6 + Math.random() * 7, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, col: cols[(Math.random() * cols.length) | 0] };
+    });
+    const t0 = performance.now();
+    cancelAnimationFrame(fxRaf);
+    const step = (t) => {
+      const el = t - t0;
+      c.clearRect(0, 0, W, H);
+      for (const p of parts) {
+        p.vy += 0.32; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        c.save();
+        c.translate(p.x, p.y); c.rotate(p.rot);
+        c.globalAlpha = Math.max(0, 1 - el / 1900);
+        c.fillStyle = p.col;
+        c.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+        c.restore();
+      }
+      if (el < 1900) fxRaf = requestAnimationFrame(step); else c.clearRect(0, 0, W, H);
+    };
+    fxRaf = requestAnimationFrame(step);
+  }
+
+  /* ---------- toast ---------- */
+  let toastT = 0;
+  function toast(text, ms) {
+    els.toast.textContent = text;
+    els.toast.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => els.toast.classList.remove('show'), ms || 2600);
+  }
+
+  /* ---------- rendering ---------- */
+  function renderStrip() {
+    if (isDict()) {
+      els.strip.setAttribute('aria-label', '聽寫的拼音');
+      els.strip.innerHTML = cells.map((cell, i) => {
+        const r = resOf(i);
+        const mk = !r ? '<span class="mk">•</span>' : (judgedOk(r) ? '<span class="mk ok">✓</span>' : (judgedWrong(r) ? '<span class="mk bad">✗</span>' : '<span class="mk q">?</span>'));
+        const state0 = !r ? '還沒寫' : (judgedOk(r) ? '答對' : (judgedWrong(r) ? '寫錯' : '寫好了，待批改'));
+        return '<button type="button" class="slot' + (cell.k === 0 ? ' wstart' : '') + (i === state.dict.idx ? ' on' : '') + '" data-i="' + i + '"' +
+          (i === state.dict.idx ? ' aria-current="true"' : '') +
+          ' aria-label="第 ' + (i + 1) + ' 個字，拼音 ' + esc(cell.py) + '，' + state0 + '"><span class="pybox">' + esc(cell.py || '?') + '</span>' + mk + '</button>';
+      }).join('');
+      return;
+    }
+    els.strip.setAttribute('aria-label', '要練習的字');
+    els.strip.innerHTML = state.chars.map((ch, i) => {
+      const b = state.rate[ch] || 0;
+      const pips = Array.from({ length: MAX_STARS }, (_, k) => '<span class="' + (k < b ? 'on' : '') + '">' + ICON.star + '</span>').join('');
+      return '<button type="button" class="slot' + (i === state.idx ? ' on' : '') + '" data-i="' + i + '"' +
+        (i === state.idx ? ' aria-current="true"' : '') +
+        ' aria-label="第 ' + (i + 1) + ' 個字 ' + ch + '，' + b + ' 顆星"><span class="mini">' + ch + '</span><span class="pips">' + pips + '</span></button>';
+    }).join('');
+  }
+  function centerSlot() {
+    const s = els.strip, el = s.children[curIdx()]; if (!el) return;
+    if (s.scrollWidth > s.clientWidth + 1) s.scrollTo({ left: el.offsetLeft - s.clientWidth / 2 + el.offsetWidth / 2, behavior: 'smooth' });
+    else if (s.scrollHeight > s.clientHeight + 1) s.scrollTo({ top: el.offsetTop - s.clientHeight / 2 + el.offsetHeight / 2, behavior: 'smooth' });
+  }
+  function renderHeader() {
+    const n = count();
+    els.progress.textContent = n ? '第 ' + (curIdx() + 1) + ' 個字，共 ' + n + ' 個' : '';
+    els.tabPractice.setAttribute('aria-selected', String(!isDict()));
+    paintRateBtn();
+    els.tabDict.setAttribute('aria-selected', String(isDict()));
+    if (isDict()) {
+      const right = cells.filter((_, i) => judgedOk(resOf(i))).length;
+      els.total.classList.add('dictotal');
+      els.total.innerHTML = ICON.check + '<span>' + right + '</span><small>/ ' + n + '</small>';
+      els.total.setAttribute('aria-label', '答對 ' + right + ' 個，共 ' + n + ' 個');
+      els.sampleTag.textContent = '範例詞';
+      els.sampleTag.hidden = !state.dict.sample;
+    } else {
+      const sum = state.chars.reduce((a, c) => a + (state.rate[c] || 0), 0);
+      els.total.classList.remove('dictotal');
+      els.total.innerHTML = ICON.star + '<span>' + sum + '</span><small>/ ' + n * MAX_STARS + '</small>';
+      els.total.setAttribute('aria-label', '已得到 ' + sum + ' 顆星，共 ' + n * MAX_STARS + ' 顆');
+      els.sampleTag.textContent = '範例字';
+      els.sampleTag.hidden = !state.isSample;
+    }
+  }
+  function renderTools() {
+    els.swatches.innerHTML = PENS.map((p) =>
+      '<button type="button" role="radio" class="sw' + (p.c === 'rainbow' ? ' rainbow' : '') + (p.light ? ' light-check' : '') + '"' +
+      ' data-pen="' + p.id + '" aria-label="' + p.name + '" aria-checked="' + (p.id === state.pen) + '"' +
+      (p.c !== 'rainbow' ? ' style="--c:' + p.c + '"' : '') + '>' + ICON.check + '</button>'
+    ).join('');
+    els.sizes.innerHTML = SIZES.map((s) =>
+      '<button type="button" role="radio" class="sz" data-size="' + s.id + '" aria-label="' + s.name + '" aria-checked="' + (s.id === state.size) + '"><i style="--d:' + s.d + 'px"></i></button>'
+    ).join('');
+    paintSizeDots();
+  }
+  function paintSizeDots() {
+    const p = penOf();
+    const fill = p.c === 'rainbow' ? 'conic-gradient(#e2382f, #f0b400, #259b4a, #1f6fe5, #8a3ff0, #e2382f)' : p.c;
+    els.sizes.querySelectorAll('i').forEach((i) => i.style.setProperty('--pen', fill));
+  }
+  function updateButtons() {
+    const ink = curInk();
+    els.undoBtn.disabled = locked() || !ink.history.length;
+    els.clearBtn.disabled = locked() || !ink.strokes.length;
+    els.prevBtn.disabled = pageStart() <= 0;
+    els.nextBtn.disabled = pageStart() + PER_PAGE >= count();
+    updateDemoBtn();
+  }
+  // fromPointer: the child started writing in this cell, so don't open its result or start a demo.
+  function goTo(i, fromPointer) {
+    const n = count(); if (!n) return;
+    i = clamp(i, 0, n - 1);
+    if (isDict()) state.dict.idx = i; else state.idx = i;
+    active = null;
+    stopDemo();
+    hideResult();
+    drawBg(); redrawInk(); renderCells(-1);
+    renderStrip(); renderHeader(); renderPrompt(); updateButtons();
+    centerSlot();
+    if (isDict()) {
+      saveDict();
+      const r = resOf(i);
+      if (r && !fromPointer && !rating) showDictResult(r, true);
+      prepareChar(false);
+    } else {
+      ensureFont(state.chars.slice(pageStart(), pageStart() + PER_PAGE).join('')).then(drawBg);
+      prepareChar(!fromPointer);
+    }
+  }
+  function renderAll() {
+    renderTools(); renderStrip(); renderHeader(); renderPrompt(); renderCells(-1); updateButtons();
+    drawBg(); redrawInk();
+  }
+  function setMode(m) {
+    if (!els.report.hidden) closeReport();
+    if (rating) setRating(false);
+    active = null;
+    stopDemo();
+    hideResult();
+    state.mode = m;
+    save();
+    renderAll();
+    layout();
+    goTo(curIdx());
+    if (m === 'dict') warmDict();
+  }
+
+  /* ---------- tool events ---------- */
+  els.strip.addEventListener('click', (e) => {
+    const b = e.target.closest('.slot'); if (b) goTo(Number(b.dataset.i));
+  });
+  els.swatches.addEventListener('click', (e) => {
+    const b = e.target.closest('.sw'); if (!b) return;
+    state.pen = b.dataset.pen; save();
+    els.swatches.querySelectorAll('.sw').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    paintSizeDots();
+  });
+  els.sizes.addEventListener('click', (e) => {
+    const b = e.target.closest('.sz'); if (!b) return;
+    state.size = b.dataset.size; save();
+    els.sizes.querySelectorAll('.sz').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+  });
+  els.tabPractice.addEventListener('click', () => { if (isDict()) setMode('practice'); });
+  els.tabDict.addEventListener('click', () => { if (!isDict()) setMode('dict'); });
+  els.prevBtn.addEventListener('click', () => goTo(pageStart() - PER_PAGE));
+  els.nextBtn.addEventListener('click', () => goTo(pageStart() + PER_PAGE));
+  els.demoBtn.addEventListener('click', () => { if (demo) finishDemo(); else playDemo(); });
+  els.undoBtn.addEventListener('click', undo);
+  els.clearBtn.addEventListener('click', clearInk);
+  els.doneBtn.addEventListener('click', done);
+  els.againBtn.addEventListener('click', () => { if (isDict()) playDemo(); });
+  els.goNextBtn.addEventListener('click', () => { if (isDict()) goNextDict(); });
+  els.rateDone.addEventListener('click', () => setRating(false));
+  els.sayBtn.addEventListener('click', say);
+  els.reportBtn.addEventListener('click', openReport);
+  document.addEventListener('keydown', (e) => {
+    if (!els.panel.hidden) { if (e.key === 'Escape') closePanel(); return; }
+    if (!els.report.hidden) { if (e.key === 'Escape') closeReport(); return; }
+    if (e.key === 'ArrowLeft') goTo(curIdx() - 1);
+    else if (e.key === 'ArrowRight') goTo(curIdx() + 1);
+    else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); }
+  });
+
+  /* ---------- parent gate: hold for one second ---------- */
+  function holdGate(btn, label, action) {
+    let t = 0;
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      btn.classList.add('holding');
+      clearTimeout(t);
+      t = setTimeout(() => { t = 0; btn.classList.remove('holding'); action(); }, 900);
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => btn.addEventListener(ev, () => {
+      if (!t) return;
+      clearTimeout(t); t = 0;
+      btn.classList.remove('holding');
+      toast('家長請按住「' + (typeof label === 'function' ? label() : label) + '」1 秒');
+    }));
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(); } });
+    btn.addEventListener('contextmenu', (e) => e.preventDefault());
+  }
+  holdGate(els.parentBtn, '家長設定', () => { setRating(false); openPanel(); });
+  holdGate(els.rateBtn, rateLabel, () => setRating(!rating));
+
+  /* ---------- libraries for the parent panel: OpenCC (both directions) and pinyin-pro ---------- */
+  const libs = {
+    occ: { url: OCC_URL, global: 'OpenCC', status: 'idle', lib: null, promise: null },
+    py: { url: PY_URL, global: 'pinyinPro', status: 'idle', lib: null, promise: null }
+  };
+  function loadLib(key) {
+    const L = libs[key];
+    if (L.promise) return L.promise;
+    L.status = 'loading';
+    L.promise = new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = L.url;
+      s.async = true;
+      const fin = () => { refreshPreview(); refreshDictPreview(); resolve(L.lib); };
+      s.onload = () => { L.lib = window[L.global] || null; L.status = L.lib ? 'ready' : 'failed'; fin(); };
+      s.onerror = () => { L.status = 'failed'; fin(); };
+      document.head.appendChild(s);
+      setTimeout(() => { if (L.status === 'loading') { L.status = 'failed'; fin(); } }, 20000);
+    });
+    return L.promise;
+  }
+  const libsBusy = () => ['occ', 'py'].some((k) => libs[k].status === 'loading' || libs[k].status === 'idle');
+  const converters = {};
+  function conv(text, from, to) {
+    const O = libs.occ.lib; if (!O) return text;
+    const key = from + '>' + to;
+    try {
+      if (!converters[key]) converters[key] = O.Converter({ from, to });
+      return converters[key](text);
+    } catch (e) { return text; }
+  }
+  // Any mix of simplified, Hong Kong and Taiwan forms → the chosen standard.
+  function toStd(text, std) {
+    if (std === 'cn') return conv(conv(text, 'tw', 'cn'), 'hk', 'cn');
+    return conv(conv(text, 'cn', std), std === 'hk' ? 'tw' : 'hk', std);
+  }
+  const convert = (text) => toStd(text, state.standard);
+  const toSimp = (text) => toStd(text, 'cn');      // simplified form, for pinyin
+  const scriptWord = () => (state.standard === 'cn' ? '簡體' : '繁體');
+  const SCRIPT_NAME = { hk: '香港繁體', tw: '台灣繁體', cn: '簡體' };
+  let hanRe, hanRunRe;
+  try { hanRe = new RegExp('\\p{Script=Han}', 'u'); hanRunRe = new RegExp('\\p{Script=Han}+', 'gu'); }
+  catch (e) { hanRe = /[㐀-鿿豈-﫿]/; hanRunRe = /[㐀-鿿豈-﫿]+/g; }
+  function parseChars(text) {
+    const out = [], seen = new Set();
+    for (const ch of text) {
+      if (hanRe.test(ch) && !seen.has(ch)) {
+        seen.add(ch); out.push(ch);
+        if (out.length >= MAX_CHARS) break;
+      }
+    }
+    return out;
+  }
+  function refreshPreview() {
+    if (els.panel.hidden) return;
+    const raw = els.charInput.value;
+    const cv = convert(raw);
+    const list = parseChars(cv);
+    const changed = new Set();
+    const A = Array.from(raw), B = Array.from(cv);
+    if (A.length === B.length) for (let i = 0; i < A.length; i++) if (A[i] !== B[i]) changed.add(B[i]);
+    els.chips.innerHTML = list.map((ch) =>
+      '<span class="chip' + (changed.has(ch) ? ' conv' : '') + '"' + (changed.has(ch) ? ' title="已轉成' + scriptWord() + '"' : '') + '>' + ch + '</span>'
+    ).join('');
+    let msg = '', warn = false;
+    const st = libs.occ.status;
+    if (st === 'loading' || st === 'idle') msg = '正在載入繁簡轉換工具…';
+    else if (st === 'failed') { msg = '繁簡轉換工具沒有載入，請直接輸入' + scriptWord() + '字。'; warn = true; }
+    else if (!raw.trim()) msg = '輸入後，轉換好的' + scriptWord() + '字會出現在下面。';
+    else if (!list.length) { msg = '沒有找到中文字。'; warn = true; }
+    else msg = '共 ' + list.length + ' 個字' + (changed.size ? '，其中 ' + changed.size + ' 個已轉成' + scriptWord() : '') + (list.length >= MAX_CHARS ? '（最多 ' + MAX_CHARS + ' 個）' : '') + '。';
+    els.convStatus.textContent = msg;
+    els.convStatus.classList.toggle('warn', warn);
+    els.charHint.textContent = '只保留中文字，重複的字只練一次。紅點表示這個字已從' + (state.standard === 'cn' ? '繁體轉成簡體' : '簡體轉成繁體') + '。';
+  }
+  let previewT = 0;
+  els.charInput.addEventListener('input', () => { clearTimeout(previewT); previewT = setTimeout(refreshPreview, 120); });
+
+  /* dictation words: traditional characters for the answer, pinyin worked out from the simplified form */
+  let draftWords = [];
+  const pyEdits = new Map();   // word -> pinyin syllables the parent typed
+  function autoPinyin(simp, n) {
+    const P = libs.py.lib;
+    if (!P || !P.pinyin) return new Array(n).fill('');
+    try {
+      let arr = P.pinyin(simp, { type: 'array' });
+      if (!Array.isArray(arr) || arr.length !== n) arr = Array.from(simp, (c) => P.pinyin(c));
+      return arr.map((s) => String(s || ''));
+    } catch (e) { return new Array(n).fill(''); }
+  }
+  function parseWords(text) {
+    const out = [], seen = new Set();
+    let total = 0;
+    for (const m of text.match(hanRunRe) || []) {
+      const t = convert(m);
+      if (seen.has(t)) continue;
+      const n = Array.from(t).length;
+      if (total + n > MAX_DICT) break;
+      seen.add(t); total += n;
+      out.push({ t, s: toSimp(m) });
+    }
+    return out;
+  }
+  function refreshDictPreview() {
+    if (els.panel.hidden) return;
+    const raw = els.dictInput.value;
+    draftWords = parseWords(raw).map((w) => {
+      const n = Array.from(w.t).length;
+      const auto = autoPinyin(w.s, n);
+      const py = pyEdits.get(w.t) || auto;
+      return { t: w.t, py: py.slice(), n };
+    });
+    els.wlist.innerHTML = draftWords.map((w, i) =>
+      '<div class="wrow"><div class="wchars">' + Array.from(w.t).map((ch) => '<span class="chip" data-ch="' + esc(ch) + '">' + esc(ch) + '</span>').join('') + '</div>' +
+      '<input class="pyin' + (w.py.filter(Boolean).length === w.n ? '' : ' bad') + '" data-w="' + i + '" value="' + esc(w.py.join(' ')) + '" aria-label="「' + esc(w.t) + '」的拼音" autocomplete="off" autocapitalize="off" spellcheck="false">' +
+      '</div>'
+    ).join('');
+    // mark characters the grader has no data for
+    els.wlist.querySelectorAll('.chip').forEach((el) => {
+      const ch = el.dataset.ch;
+      getStrokes(ch).then((d) => { if (!d && strokeCache.has(ch)) { el.classList.add('nodata'); el.title = '沒有筆順資料'; } });
+    });
+    let msg = '', warn = false;
+    const n = draftWords.reduce((a, w) => a + w.n, 0);
+    if (libsBusy()) msg = '正在載入轉換和拼音工具…';
+    else if (libs.occ.status === 'failed' || libs.py.status === 'failed') { msg = '轉換或拼音工具沒有載入。可以直接輸入' + scriptWord() + '字，再手動填拼音。'; warn = true; }
+    else if (!raw.trim()) msg = '輸入後，詞語和拼音會出現在下面。';
+    else if (!draftWords.length) { msg = '沒有找到中文字。'; warn = true; }
+    else msg = '共 ' + draftWords.length + ' 個詞、' + n + ' 個字' + (n >= MAX_DICT ? '（最多 ' + MAX_DICT + ' 個字）' : '') + '。';
+    els.dictStatus.textContent = msg;
+    els.dictStatus.classList.toggle('warn', warn);
+  }
+  let dictT = 0;
+  els.dictInput.addEventListener('input', () => { clearTimeout(dictT); dictT = setTimeout(refreshDictPreview, 150); });
+  els.wlist.addEventListener('input', (e) => {
+    const inp = e.target.closest('.pyin'); if (!inp) return;
+    const w = draftWords[Number(inp.dataset.w)]; if (!w) return;
+    const syl = inp.value.trim().split(/\s+/).filter(Boolean);
+    w.py = syl;
+    pyEdits.set(w.t, syl);
+    inp.classList.toggle('bad', syl.length !== w.n);
+  });
+
+  /* panel */
+  let panelTab = 'practice';
+  function setPanelTab(tab) {
+    panelTab = tab;
+    els.panel.querySelectorAll('.ptabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    els.panel.querySelectorAll('.pane').forEach((p) => { p.hidden = p.dataset.pane !== tab; });
+    els.panelLead.textContent = tab === 'dict'
+      ? '輸入要聽寫的詞語，簡體或繁體都可以，會自動轉成' + SCRIPT_NAME[state.standard] + '。孩子只看得到拼音；寫完一個字，電腦會給筆順分和結構分，對錯由家長批改。'
+      : '輸入孩子要練習的字，簡體或繁體都可以，會自動轉成' + SCRIPT_NAME[state.standard] + '放進米字格。';
+    els.saveBtn.textContent = tab === 'dict' ? '開始聽寫' : '開始練習';
+    // examples in the other script, to show either can be typed
+    const cn = state.standard === 'cn';
+    els.charInput.placeholder = cn ? '例如：學習寫字' : '例如：学习写字';
+    els.dictInput.placeholder = cn ? '用空格或换行分开，例如：學校 老師 朋友' : '用空格或換行分開，例如：学校 老师 朋友';
+    els.resetBtn.hidden = tab === 'dict';
+    if (tab === 'dict') refreshDictPreview(); else refreshPreview();
+  }
+  function syncSegs() {
+    els.panel.querySelectorAll('.seg').forEach((seg) => {
+      const key = seg.dataset.key;
+      const val = BOOL_KEYS.includes(key) ? (state[key] ? 'on' : 'off') : state[key];
+      seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === val)));
+    });
+  }
+  els.panel.addEventListener('click', (e) => {
+    if (e.target === els.panel) { closePanel(); return; }
+    const tab = e.target.closest('.ptabs button');
+    if (tab) { setPanelTab(tab.dataset.tab); return; }
+    const b = e.target.closest('.seg button'); if (!b) return;
+    const key = b.closest('.seg').dataset.key, val = b.dataset.val;
+    if (key === 'standard') { applyStandard(val); return; }
+    if (BOOL_KEYS.includes(key)) state[key] = val === 'on';
+    else state[key] = val;
+    save(); syncSegs();
+    if (key === 'ghost') drawBg();
+    if (key === 'speak') renderPrompt();
+  });
+
+  let lastFocus = null;
+  function openPanel() {
+    stopDemo();
+    closeReport();
+    lastFocus = document.activeElement;
+    els.charInput.value = state.isSample ? '' : state.chars.join('');
+    pyEdits.clear();
+    if (!state.dict.sample) for (const w of state.dict.words) pyEdits.set(w.t, w.py.slice());
+    els.dictInput.value = state.dict.sample ? '' : state.dict.words.map((w) => w.t).join(' ');
+    els.panel.hidden = false;
+    els.stdStatus.textContent = '';
+    disarmReset();
+    syncSegs();
+    setPanelTab(isDict() ? 'dict' : 'practice');
+    loadLib('occ'); loadLib('py');
+    els.saveBtn.focus({ preventScroll: true });
+  }
+  function closePanel() {
+    els.panel.hidden = true;
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  els.closeBtn.addEventListener('click', closePanel);
+  els.saveBtn.addEventListener('click', async () => {
+    if (libsBusy()) {
+      const label = els.saveBtn.textContent;
+      els.saveBtn.disabled = true; els.saveBtn.textContent = '轉換中…';
+      await Promise.all([loadLib('occ'), loadLib('py')]);
+      els.saveBtn.disabled = false; els.saveBtn.textContent = label;
+    }
+    if (panelTab === 'dict') { saveDictionPanel(); return; }
+    const raw = els.charInput.value;
+    const list = parseChars(convert(raw));
+    if (!list.length) {
+      if (!raw.trim()) { closePanel(); if (isDict()) setMode('practice'); return; }
+      refreshPreview(); return;
+    }
+    const kept = {};
+    for (const ch of list) if (state.ink[ch]) kept[ch] = state.ink[ch];
+    state.ink = kept;
+    state.chars = list;
+    state.isSample = false;
+    state.idx = 0;
+    save();
+    closePanel();
+    setMode('practice');
+    ensureFont(list.join('')).then(drawBg);
+  });
+  function saveDictionPanel() {
+    refreshDictPreview();
+    const raw = els.dictInput.value;
+    if (!draftWords.length) {
+      if (!raw.trim()) { closePanel(); if (!isDict()) setMode('dict'); return; }
+      return;
+    }
+    const bad = draftWords.find((w) => w.py.filter(Boolean).length !== w.n);
+    if (bad) {
+      els.dictStatus.textContent = '「' + bad.t + '」的拼音要有 ' + bad.n + ' 個音節，用空格分開。';
+      els.dictStatus.classList.add('warn');
+      return;
+    }
+    state.dict = { words: draftWords.map((w) => ({ t: w.t, py: w.py.slice() })), idx: 0, res: {}, sample: false };
+    state.dictInk = {};
+    rebuildCells();
+    saveDict();
+    closePanel();
+    setMode('dict');
+    cells.slice(0, 4).forEach((c) => getStrokes(c.ch));
+  }
+  let stdBusy = false;
+  async function applyStandard(std) {
+    if (std === state.standard || stdBusy || !SCRIPT_NAME[std]) return;
+    stdBusy = true;
+    els.stdStatus.textContent = '正在轉換…';
+    els.stdStatus.classList.remove('warn');
+    await loadLib('occ');
+    stdBusy = false;
+    if (!libs.occ.lib) {
+      els.stdStatus.textContent = '繁簡轉換工具沒有載入，請檢查網路後再試。';
+      els.stdStatus.classList.add('warn');
+      syncSegs();
+      return;
+    }
+    state.standard = std;
+    const cv = (t) => toStd(t, std);
+    // practice: convert the list as one string so neighbouring characters give context
+    const old = state.chars, joined = Array.from(cv(old.join('')));
+    const next = joined.length === old.length ? joined : old.map(cv);
+    const chars = [], seen = new Set();
+    next.forEach((c) => { if (!seen.has(c)) { seen.add(c); chars.push(c); } });
+    const rate = {}, ink = {};
+    for (const k in state.rate) { const c = cv(k); if (!(c in rate)) rate[c] = state.rate[k]; }
+    for (const k in state.ink) { const c = cv(k); if (!(c in ink)) ink[c] = state.ink[k]; }
+    state.chars = chars; state.rate = rate; state.ink = ink;
+    state.idx = clamp(state.idx, 0, Math.max(0, chars.length - 1));
+    // dictation: words convert as phrases; an answer whose character changed has to be written again
+    const before = cells.map((c) => c.ch);
+    state.dict.words = state.dict.words.map((w) => ({ t: cv(w.t), py: w.py.slice() }));
+    rebuildCells();
+    if (cells.length !== before.length) { state.dict.res = {}; state.dictInk = {}; state.dict.idx = 0; }
+    else cells.forEach((c, i) => { if (c.ch !== before[i]) { delete state.dict.res[i]; delete state.dictInk[i]; } });
+    const edits = [...pyEdits]; pyEdits.clear();
+    for (const [t, py] of edits) pyEdits.set(cv(t), py);
+    els.charInput.value = cv(els.charInput.value);
+    els.dictInput.value = cv(els.dictInput.value);
+    save(); saveDict(); saveInk();
+    setUIScript();
+    pickVoice();
+    syncSegs();
+    setPanelTab(panelTab);
+    els.stdStatus.textContent = '已改成' + SCRIPT_NAME[std] + '：描紅的字和聽寫的詞都換好了。';
+    renderAll(); layout();
+    goTo(curIdx(), true);
+    ensureFont(state.chars.concat(cells.map((c) => c.ch)).join('')).then(drawBg);
+  }
+  let resetArmed = false, resetT = 0;
+  function disarmReset() { resetArmed = false; clearTimeout(resetT); els.resetBtn.textContent = '清除星星紀錄'; }
+  els.resetBtn.addEventListener('click', () => {
+    if (!resetArmed) {
+      resetArmed = true;
+      els.resetBtn.textContent = '再按一次確認清除';
+      resetT = setTimeout(disarmReset, 3500);
+      return;
+    }
+    disarmReset();
+    state.rate = {}; save();
+    renderCells(-1);
+    renderStrip(); renderHeader();
+    toast('星星紀錄已清除');
+  });
+
+  /* ---------- 簡體: interface text follows the chosen script ----------
+     The page is written in traditional characters; for 簡體 every interface string is mapped character by
+     character (the map is built from this page's own text, where no character needs context). */
+  const T2S_PAIRS = '練练紅红聽听寫写範范長长評评開开設设啟启單单區区組组唸念給给績绩個个筆笔顏颜細细體体灣湾簡简習习轉转換换後后淺浅顯显動动關关詞词語语產产請请檢检節节間间虛虚線线沒没順顺資资讀读閉闭紀纪錄录來来數数課课為为準准錯错學学師师黃黄綠绿藍蓝優优對对畫画國国確确麼么記记這这嗎吗過过還还經经繼继續续著着媽妈結结點点顆颗邊边裡里構构電电腦脑會会豈岂載载輸输現现複复從从進进網网試试認认';
+  const T2S = new Map(), S2T = new Map();
+  { const a = Array.from(T2S_PAIRS); for (let i = 0; i + 1 < a.length; i += 2) { T2S.set(a[i], a[i + 1]); S2T.set(a[i + 1], a[i]); } }
+  const UI_ATTRS = ['aria-label', 'title', 'placeholder'];
+  function mapText(t, M) {
+    let out = '', hit = false;
+    for (const c of t) { const m = M.get(c); if (m) { out += m; hit = true; } else out += c; }
+    return hit ? out : t;
+  }
+  function mapAttr(el, a, M) { if (el.hasAttribute('data-keep')) return; const v0 = el.getAttribute(a); if (v0) { const v = mapText(v0, M); if (v !== v0) el.setAttribute(a, v); } }
+  function mapTree(n, M) {
+    if (n.nodeType === 3) {
+      const p = n.parentNode;
+      if (p && !/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)) { const v = mapText(n.nodeValue, M); if (v !== n.nodeValue) n.nodeValue = v; }
+      return;
+    }
+    if (n.nodeType !== 1 || /^(SCRIPT|STYLE)$/.test(n.nodeName)) return;
+    for (const a of UI_ATTRS) mapAttr(n, a, M);
+    for (const c of n.childNodes) mapTree(c, M);
+  }
+  let uiObs = null;
+  function setUIScript() {
+    const simp = state.standard === 'cn';
+    document.documentElement.lang = simp ? 'zh-Hans' : (state.standard === 'hk' ? 'zh-HK' : 'zh-TW');
+    if (simp && !uiObs) {
+      mapTree(document.body, T2S);
+      uiObs = new MutationObserver((ms) => {
+        for (const m of ms) {
+          if (m.type === 'childList') m.addedNodes.forEach((n) => mapTree(n, T2S));
+          else if (m.type === 'attributes') mapAttr(m.target, m.attributeName, T2S);
+          else mapTree(m.target, T2S);
+        }
+      });
+      uiObs.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: UI_ATTRS });
+    } else if (!simp && uiObs) {
+      uiObs.disconnect(); uiObs = null;
+      mapTree(document.body, S2T);
+    }
+  }
+
+  /* ---------- theme changes repaint the paper ---------- */
+  if (window.matchMedia) {
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', drawBg);
+  }
+  new MutationObserver(drawBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', drawBg);
+
+  /* ---------- boot ---------- */
+  function start(data) {
+    const hadSaved = loadSaved();
+    setUIScript();
+    loadDict();
+    rebuildCells();
+    if (data && data.ink && typeof data.ink === 'object') state.ink = data.ink;
+    else loadInk();
+    if (data && data.dictInk && typeof data.dictInk === 'object') state.dictInk = data.dictInk;
+    if (data && typeof data.idx === 'number') state.idx = clamp(data.idx, 0, state.chars.length - 1);
+
+    els.prevBtn.innerHTML = ICON.left;
+    els.nextBtn.innerHTML = ICON.right;
+    els.undoBtn.innerHTML = ICON.undo + '<span>上一步</span>';
+    els.clearBtn.innerHTML = ICON.eraser + '<span>擦掉</span>';
+    els.doneBtn.innerHTML = ICON.check + '<span>寫好了</span>';
+    els.sayBtn.innerHTML = ICON.speaker;
+
+    renderAll();
+    layout();
+    if (window.ResizeObserver) new ResizeObserver(layout).observe(els.holder);
+    window.addEventListener('resize', layout);
+    ensureFont(state.chars.join('')).then(() => { drawBg(); });
+    centerSlot();
+    if (isDict()) {
+      const r = resOf(state.dict.idx);
+      if (r) showDictResult(r, true);
+      prepareChar(false);
+      warmDict();
+    } else {
+      prepareChar(true);
+    }
+    pickVoice();
+    try { if ('speechSynthesis' in window) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch (e) { /* ignore */ }
+    if (!hadSaved) setTimeout(() => toast('這些是範例字。家長按住右上角「家長設定」，就能換成孩子要練的字，或設定聽寫。', 5200), 900);
+  }
+
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function') hot.snapshot(() => ({ ink: state.ink, idx: state.idx, dictInk: state.dictInk }));
+  if (hot && typeof hot.ready === 'function') hot.ready(start);
+  else start((hot && hot.data) || {});
+})();
+</script>
+
+</body>
+</html>

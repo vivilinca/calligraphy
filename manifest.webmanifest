@@ -1,0 +1,24 @@
+{
+  "name": "米字格練字",
+  "short_name": "米字格",
+  "description": "米字格描紅、筆順示範、聽寫",
+  "lang": "zh-HK",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e3eae6",
+  "theme_color": "#e3eae6",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
